@@ -8,383 +8,208 @@
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --white:      #ffffff;
-  --gray-50:    #f9fafb;
-  --gray-100:   #f2f4f6;
-  --gray-200:   #e5e8eb;
-  --gray-300:   #d1d5db;
-  --gray-400:   #9ca3af;
-  --gray-500:   #6b7280;
-  --gray-600:   #4b5563;
-  --gray-700:   #374151;
-  --gray-900:   #111827;
-  --blue:       #3182f6;
-  --blue-light: #ebf2ff;
-  --blue-dark:  #1b64da;
-  --green:      #00b493;
-  --green-light:#e6f9f5;
-  --red:        #f04452;
-  --red-light:  #fff0f1;
-  --amber:      #f59e0b;
-  --font: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-  --mono: 'JetBrains Mono', 'Consolas', monospace;
-  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 16px rgba(0,0,0,.08);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,.10);
+  --white:#fff; --gray-50:#f9fafb; --gray-100:#f2f4f6; --gray-200:#e5e8eb;
+  --gray-300:#d1d5db; --gray-400:#9ca3af; --gray-500:#6b7280;
+  --gray-600:#4b5563; --gray-700:#374151; --gray-900:#111827;
+  --blue:#3182f6; --blue-light:#ebf2ff; --blue-dark:#1b64da;
+  --green:#00b493; --green-light:#e6f9f5;
+  --red:#f04452; --red-light:#fff0f1;
+  --amber:#f59e0b; --amber-light:#fffbeb;
+  --purple:#7c3aed; --purple-light:#f3f0ff;
+  --font:'Pretendard',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Consolas',monospace;
+  --r-sm:8px; --r-md:12px; --r-lg:16px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.06); --sh-md:0 4px 16px rgba(0,0,0,.08);
 }
+body { font-family:var(--font); background:var(--gray-50); color:var(--gray-900); font-size:15px; line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; }
 
-body {
-  font-family: var(--font);
-  background: var(--gray-50);
-  color: var(--gray-900);
-  font-size: 15px;
-  line-height: 1.5;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+/* Header */
+header { background:var(--white); border-bottom:1px solid var(--gray-200); padding:0 32px; height:60px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:100; }
+.logo-icon { width:34px; height:34px; background:var(--blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.logo-text { font-size:16px; font-weight:700; letter-spacing:-0.02em; }
+.logo-sub  { font-size:12px; color:var(--gray-400); font-weight:500; margin-left:2px; }
+.header-right { margin-left:auto; display:flex; align-items:center; gap:12px; }
+#adb-badge { display:flex; align-items:center; gap:6px; padding:5px 12px; background:var(--gray-100); border-radius:20px; font-size:13px; font-weight:500; color:var(--gray-500); transition:all .2s; }
+#adb-badge .dot { width:7px; height:7px; border-radius:50%; background:var(--gray-300); transition:background .3s; flex-shrink:0; }
+#adb-badge.connected { background:var(--green-light); color:var(--green); }
+#adb-badge.connected .dot { background:var(--green); }
+#adb-badge.error { background:var(--red-light); color:var(--red); }
+#adb-badge.error .dot { background:var(--red); }
 
-/* ── Header ── */
-header {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-  padding: 0 32px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.logo-icon {
-  width: 34px; height: 34px; background: var(--blue); border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
-}
-.logo-text { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
-.logo-sub  { font-size: 12px; color: var(--gray-400); font-weight: 500; margin-left: 2px; }
-.header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+/* Layout */
+.layout { display:grid; grid-template-columns:320px 1fr; height:calc(100vh - 60px); }
+.sidebar { background:var(--white); border-right:1px solid var(--gray-200); overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:18px; }
+.main { overflow-y:auto; padding:28px 32px; background:var(--gray-50); }
 
-#adb-badge {
-  display: flex; align-items: center; gap: 6px;
-  padding: 5px 12px; background: var(--gray-100); border-radius: 20px;
-  font-size: 13px; font-weight: 500; color: var(--gray-500); transition: all .2s;
-}
-#adb-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray-300); transition: background .3s; flex-shrink: 0; }
-#adb-badge.connected { background: var(--green-light); color: var(--green); }
-#adb-badge.connected .dot { background: var(--green); }
-#adb-badge.error { background: var(--red-light); color: var(--red); }
-#adb-badge.error .dot { background: var(--red); }
+/* Sidebar */
+.sec-label { font-size:11px; font-weight:700; color:var(--gray-400); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
+.s-card { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--r-lg); padding:14px; }
+#device-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+.device-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--r-md); border:1.5px solid var(--gray-200); background:var(--white); cursor:pointer; transition:all .15s; }
+.device-item:hover,.device-item.active { border-color:var(--blue); background:var(--blue-light); }
+.d-icon { width:34px; height:34px; background:var(--gray-100); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+.device-item.active .d-icon { background:rgba(49,130,246,.15); }
+.d-name { font-size:13px; font-weight:600; }
+.d-id   { font-size:11px; font-family:var(--mono); color:var(--gray-400); }
+.btn-refresh { width:100%; padding:9px; background:var(--white); border:1.5px solid var(--gray-200); border-radius:var(--r-sm); font-size:13px; font-weight:600; color:var(--gray-500); cursor:pointer; font-family:var(--font); transition:all .15s; }
+.btn-refresh:hover { border-color:var(--blue); color:var(--blue); background:var(--blue-light); }
 
-/* ── Layout ── */
-.layout {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  height: calc(100vh - 60px);
-}
-.sidebar {
-  background: var(--white); border-right: 1px solid var(--gray-200);
-  overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 20px;
-}
-.main { overflow-y: auto; padding: 32px 36px; background: var(--gray-50); }
+/* Drop zone */
+.drop-zone { display:block; border:2px dashed var(--gray-200); border-radius:var(--r-md); padding:18px 14px; text-align:center; cursor:pointer; transition:all .2s; background:var(--white); }
+.drop-zone:hover,.drop-zone.drag { border-color:var(--blue); background:var(--blue-light); }
+.drop-zone input { display:none; }
+.drop-icon  { font-size:26px; margin-bottom:6px; display:block; }
+.drop-title { font-size:13px; font-weight:600; color:var(--gray-700); margin-bottom:2px; }
+.drop-sub   { font-size:11px; color:var(--gray-400); }
+#file-status { font-size:11px; font-weight:500; color:var(--green); white-space:pre-wrap; word-break:break-all; line-height:1.6; margin-top:4px; }
 
-/* ── Sidebar Labels / Cards ── */
-.sec-label { font-size: 11px; font-weight: 700; color: var(--gray-400); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
-.s-card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 16px; }
+/* Progress */
+#progress-wrap { display:none; flex-direction:column; gap:6px; padding:4px 0; }
+.prog-top { display:flex; justify-content:space-between; }
+.prog-label { font-size:12px; font-weight:600; color:var(--gray-700); }
+#prog-pct   { font-size:12px; font-weight:700; color:var(--blue); }
+#prog-track { height:5px; background:var(--gray-200); border-radius:99px; overflow:hidden; }
+#prog-bar   { height:100%; width:0%; background:linear-gradient(90deg,var(--blue),#60a5fa); border-radius:99px; transition:width .3s; }
+#prog-status { font-size:10px; color:var(--gray-400); font-family:var(--mono); }
 
-/* ── Device List ── */
-#device-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-.device-item {
-  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
-  border-radius: var(--radius-md); border: 1.5px solid var(--gray-200);
-  background: var(--white); cursor: pointer; transition: all .15s;
-}
-.device-item:hover, .device-item.active { border-color: var(--blue); background: var(--blue-light); }
-.device-icon-wrap { width: 36px; height: 36px; background: var(--gray-100); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-.device-item.active .device-icon-wrap { background: rgba(49,130,246,.15); }
-.device-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
-.device-id   { font-size: 11px; font-family: var(--mono); color: var(--gray-400); margin-top: 1px; }
-.btn-refresh {
-  width: 100%; padding: 10px; background: var(--white); border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--gray-500);
-  cursor: pointer; font-family: var(--font); transition: all .15s;
-}
-.btn-refresh:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+/* Buttons */
+.btn-primary { width:100%; padding:12px; background:var(--blue); color:var(--white); border:none; border-radius:var(--r-md); font-size:14px; font-weight:700; font-family:var(--font); cursor:pointer; transition:all .15s; }
+.btn-primary:hover:not(:disabled) { background:var(--blue-dark); transform:translateY(-1px); box-shadow:0 4px 12px rgba(49,130,246,.35); }
+.btn-primary:disabled { background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
+.hint-card { background:var(--blue-light); border-radius:var(--r-md); padding:13px 14px; font-size:12px; color:var(--blue-dark); line-height:1.9; }
+.hint-card strong { display:block; font-size:12px; font-weight:700; margin-bottom:5px; }
 
-/* ── Drop Zone ── */
-.drop-zone {
-  display: block; border: 2px dashed var(--gray-200); border-radius: var(--radius-md);
-  padding: 20px 16px; text-align: center; cursor: pointer; transition: all .2s; background: var(--white);
-}
-.drop-zone:hover, .drop-zone.drag { border-color: var(--blue); background: var(--blue-light); }
-.drop-zone input { display: none; }
-.drop-icon  { font-size: 28px; margin-bottom: 8px; display: block; }
-.drop-title { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 3px; }
-.drop-sub   { font-size: 12px; color: var(--gray-400); }
-#file-status { font-size: 12px; font-weight: 500; color: var(--green); white-space: pre-wrap; word-break: break-all; line-height: 1.6; margin-top: 2px; min-height: 18px; }
+/* Tab bar */
+.tab-bar { display:flex; gap:3px; background:var(--gray-100); border-radius:var(--r-lg); padding:4px; margin-bottom:24px; }
+.tab-btn { flex:1; padding:9px 8px; border:none; border-radius:var(--r-md); font-size:13px; font-weight:600; font-family:var(--font); cursor:pointer; transition:all .2s; color:var(--gray-500); background:transparent; display:flex; align-items:center; justify-content:center; gap:5px; white-space:nowrap; }
+.tab-btn.active { background:var(--white); color:var(--gray-900); box-shadow:var(--sh-sm); }
 
-/* ── Progress ── */
-#progress-wrap { display: none; flex-direction: column; gap: 7px; padding: 4px 0; }
-.progress-top  { display: flex; justify-content: space-between; align-items: center; }
-.progress-label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
-#progress-pct   { font-size: 13px; font-weight: 700; color: var(--blue); }
-#progress-track { height: 6px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
-#progress-bar   { height: 100%; width: 0%; background: linear-gradient(90deg, var(--blue), #60a5fa); border-radius: 99px; transition: width .3s ease; }
-#progress-status { font-size: 11px; color: var(--gray-400); font-family: var(--mono); }
+/* Empty state */
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:65%; gap:14px; text-align:center; }
+.empty-icon  { width:68px; height:68px; background:var(--gray-100); border-radius:22px; display:flex; align-items:center; justify-content:center; font-size:30px; }
+.empty-title { font-size:19px; font-weight:700; color:var(--gray-700); letter-spacing:-0.02em; }
+.empty-desc  { font-size:13px; color:var(--gray-400); line-height:1.7; }
 
-/* ── Buttons ── */
-.btn-primary {
-  width: 100%; padding: 13px; background: var(--blue); color: var(--white); border: none;
-  border-radius: var(--radius-md); font-size: 15px; font-weight: 700; font-family: var(--font);
-  cursor: pointer; transition: all .15s; letter-spacing: -0.01em;
-}
-.btn-primary:hover:not(:disabled) { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(49,130,246,.35); }
-.btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+/* Section head */
+.sec-head { font-size:11px; font-weight:700; color:var(--gray-400); letter-spacing:.07em; text-transform:uppercase; margin-bottom:10px; margin-top:24px; display:flex; align-items:center; gap:8px; }
+.sec-head:first-child { margin-top:0; }
+.sec-head::after { content:''; flex:1; height:1px; background:var(--gray-200); }
 
-/* ── Hint Card ── */
-.hint-card { background: var(--blue-light); border-radius: var(--radius-md); padding: 14px 16px; font-size: 13px; color: var(--blue-dark); line-height: 1.9; }
-.hint-card strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--blue-dark); }
+/* Info grid */
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.info-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--r-md); padding:14px 16px; transition:box-shadow .15s; }
+.info-card:hover { box-shadow:var(--sh-sm); }
+.info-card.full  { grid-column:1/-1; }
+.info-card.hero  { background:var(--blue); border-color:var(--blue); padding:18px 20px; }
+.info-label { font-size:10px; font-weight:600; color:var(--gray-400); letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
+.info-card.hero .info-label { color:rgba(255,255,255,.7); }
+.info-value { font-size:14px; font-weight:600; color:var(--gray-900); font-family:var(--mono); word-break:break-all; line-height:1.4; }
+.info-value.hero-val { font-size:20px; font-weight:700; color:var(--white); letter-spacing:-0.01em; }
+.info-value.empty { color:var(--gray-300); font-weight:400; font-family:var(--font); font-size:13px; }
+.src-badge { display:inline-block; font-size:10px; font-weight:700; font-family:var(--font); padding:2px 6px; border-radius:5px; vertical-align:middle; margin-left:6px; }
+.src-adb { background:var(--green-light); color:var(--green); }
+.src-log { background:var(--blue-light); color:var(--blue); }
 
-/* ── Tab Bar ── */
-.tab-bar {
-  display: flex;
-  gap: 4px;
-  background: var(--gray-100);
-  border-radius: var(--radius-lg);
-  padding: 4px;
-  margin-bottom: 28px;
-}
-.tab-btn {
-  flex: 1;
-  padding: 10px 16px;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 600;
-  font-family: var(--font);
-  cursor: pointer;
-  transition: all .2s;
-  color: var(--gray-500);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  letter-spacing: -0.01em;
-}
-.tab-btn.active {
-  background: var(--white);
-  color: var(--gray-900);
-  box-shadow: var(--shadow-sm);
-}
-.tab-btn .tab-badge {
-  background: var(--blue);
-  color: var(--white);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 99px;
-  display: none;
-}
-.tab-btn.active .tab-badge { display: inline-block; }
+/* ── 상세분석 탭 ── */
+.analysis-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.stat-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--r-md); padding:14px 16px; }
+.stat-label { font-size:11px; font-weight:600; color:var(--gray-400); letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
+.stat-value { font-size:22px; font-weight:800; letter-spacing:-0.02em; color:var(--gray-900); }
+.stat-sub   { font-size:12px; color:var(--gray-400); margin-top:2px; }
 
-/* ── Empty State ── */
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 65%; gap: 16px; text-align: center; }
-.empty-icon  { width: 72px; height: 72px; background: var(--gray-100); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-.empty-title { font-size: 20px; font-weight: 700; color: var(--gray-700); letter-spacing: -0.02em; }
-.empty-desc  { font-size: 14px; color: var(--gray-400); line-height: 1.7; }
+/* 이슈 카드 */
+.issue-list { display:flex; flex-direction:column; gap:8px; }
+.issue-card { background:var(--white); border-radius:var(--r-md); padding:14px 16px; border-left:4px solid var(--gray-300); border-top:1px solid var(--gray-200); border-right:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); }
+.issue-card.crash     { border-left-color:var(--red); }
+.issue-card.anr       { border-left-color:var(--amber); }
+.issue-card.tombstone { border-left-color:var(--purple); }
+.issue-time    { font-size:11px; font-family:var(--mono); color:var(--gray-400); margin-bottom:4px; }
+.issue-process { font-size:13px; font-weight:600; color:var(--gray-700); margin-bottom:4px; }
+.issue-exc     { font-size:12px; font-family:var(--mono); color:var(--red); word-break:break-all; margin-bottom:6px; }
+.issue-type-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:5px; margin-bottom:6px; }
+.badge-crash     { background:var(--red-light); color:var(--red); }
+.badge-anr       { background:var(--amber-light); color:var(--amber); }
+.badge-tombstone { background:var(--purple-light); color:var(--purple); }
+.stacktrace-wrap { background:var(--gray-50); border-radius:6px; padding:8px 10px; margin-top:4px; }
+.stacktrace-line { font-size:11px; font-family:var(--mono); color:var(--gray-600); line-height:1.8; }
+.stacktrace-line.caused { color:var(--red); font-weight:500; }
 
-/* ── Section Head ── */
-.section-head {
-  font-size: 12px; font-weight: 700; color: var(--gray-400); letter-spacing: .07em;
-  text-transform: uppercase; margin-bottom: 12px; margin-top: 28px;
-  display: flex; align-items: center; gap: 8px;
-}
-.section-head:first-child { margin-top: 0; }
-.section-head::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+/* 다중단말 */
+.multi-tab-bar { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+.multi-tab { padding:6px 14px; border:1.5px solid var(--gray-200); border-radius:99px; font-size:12px; font-weight:600; color:var(--gray-500); cursor:pointer; background:var(--white); transition:all .15s; display:flex; align-items:center; gap:6px; }
+.multi-tab.active { border-color:var(--blue); color:var(--blue); background:var(--blue-light); }
+.multi-tab .close-btn { font-size:14px; color:var(--gray-400); line-height:1; }
+.multi-tab .close-btn:hover { color:var(--red); }
+.btn-add-device { padding:6px 14px; border:1.5px dashed var(--gray-300); border-radius:99px; font-size:12px; font-weight:600; color:var(--gray-400); cursor:pointer; background:transparent; font-family:var(--font); transition:all .15s; }
+.btn-add-device:hover { border-color:var(--blue); color:var(--blue); }
 
-/* ── Result Header ── */
-.result-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; }
-.result-eyebrow { font-size: 12px; font-weight: 600; color: var(--blue); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
-.result-title   { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; color: var(--gray-900); }
-.btn-header-copy {
-  display: flex; align-items: center; gap: 8px; padding: 12px 22px;
-  background: var(--blue); color: var(--white); border: none; border-radius: var(--radius-md);
-  font-size: 15px; font-weight: 700; font-family: var(--font); cursor: pointer; transition: all .15s;
-  white-space: nowrap; flex-shrink: 0; letter-spacing: -0.01em;
-}
-.btn-header-copy:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(49,130,246,.35); }
-.btn-header-copy.copied { background: var(--green); }
+/* ── VOC 탭 ── */
+.voc-form { display:flex; flex-direction:column; gap:10px; }
+.voc-field { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--r-md); overflow:hidden; transition:box-shadow .15s,border-color .15s; }
+.voc-field:focus-within { border-color:var(--blue); box-shadow:0 0 0 3px rgba(49,130,246,.1); }
+.voc-field-header { display:flex; align-items:center; gap:9px; padding:11px 14px 9px; border-bottom:1px solid var(--gray-100); }
+.voc-field-num { width:20px; height:20px; background:var(--blue-light); color:var(--blue); border-radius:6px; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.voc-field-label { font-size:13px; font-weight:700; color:var(--gray-700); flex:1; }
+.auto-chip { font-size:10px; font-weight:700; padding:2px 7px; border-radius:99px; letter-spacing:.03em; }
+.auto-chip.auto   { background:var(--green-light); color:var(--green); }
+.auto-chip.manual { background:var(--gray-100); color:var(--gray-500); }
+.auto-chip.mixed  { background:var(--amber-light); color:var(--amber); }
+.voc-field-body { padding:11px 14px; }
+.auto-value { font-family:var(--mono); font-size:13px; font-weight:500; color:var(--gray-900); line-height:1.7; word-break:break-all; white-space:pre-line; }
+.auto-value.empty-auto { color:var(--gray-300); font-family:var(--font); font-size:12px; }
+.voc-input { width:100%; border:none; outline:none; font-family:var(--font); font-size:14px; color:var(--gray-900); resize:vertical; min-height:40px; line-height:1.6; background:transparent; }
+.voc-input::placeholder { color:var(--gray-300); }
+.sub-fields { display:flex; flex-direction:column; gap:8px; }
+.sub-field  { display:flex; flex-direction:column; gap:3px; }
+.sub-label  { font-size:10px; font-weight:600; color:var(--gray-400); letter-spacing:.04em; text-transform:uppercase; }
+.sub-input  { border:none; border-bottom:1px solid var(--gray-200); outline:none; font-family:var(--font); font-size:14px; color:var(--gray-900); padding:5px 0; background:transparent; width:100%; transition:border-color .15s; }
+.sub-input:focus { border-color:var(--blue); }
+.sub-input::placeholder { color:var(--gray-300); }
+.voc-select { width:100%; border:none; outline:none; font-family:var(--font); font-size:14px; color:var(--gray-900); background:transparent; cursor:pointer; }
+.voc-select option { font-size:14px; }
 
-/* ── Info Grid ── */
-.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.info-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 16px 18px; transition: box-shadow .15s; }
-.info-card:hover { box-shadow: var(--shadow-sm); }
-.info-card.full { grid-column: 1 / -1; }
-.info-card.hero { background: var(--blue); border-color: var(--blue); padding: 20px 22px; }
-.info-label { font-size: 11px; font-weight: 600; color: var(--gray-400); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
-.info-card.hero .info-label { color: rgba(255,255,255,.7); }
-.info-value { font-size: 15px; font-weight: 600; color: var(--gray-900); font-family: var(--mono); word-break: break-all; line-height: 1.4; }
-.info-value.hero-val { font-size: 22px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
-.info-value.empty { color: var(--gray-300); font-weight: 400; }
-.src-badge { display: inline-block; font-size: 10px; font-weight: 700; font-family: var(--font); padding: 2px 7px; border-radius: 5px; vertical-align: middle; margin-left: 7px; letter-spacing: .03em; }
-.src-adb { background: var(--green-light); color: var(--green); }
-.src-log { background: var(--blue-light); color: var(--blue); }
+/* VOC preview */
+.voc-preview-wrap { background:var(--gray-900); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--sh-md); }
+.voc-topbar { display:flex; align-items:center; justify-content:space-between; padding:11px 16px; background:var(--gray-700); }
+.voc-dots { display:flex; gap:5px; }
+.voc-dots span { width:10px; height:10px; border-radius:50%; }
+.voc-dots .d1{background:#ff5f57} .voc-dots .d2{background:#ffbd2e} .voc-dots .d3{background:#28ca41}
+.voc-topbar-label { font-size:12px; font-weight:600; color:var(--gray-300); }
+.btn-copy-preview { padding:4px 12px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); border-radius:6px; font-size:11px; font-weight:600; color:var(--gray-300); cursor:pointer; font-family:var(--font); transition:all .15s; }
+.btn-copy-preview:hover { background:rgba(255,255,255,.18); color:var(--white); }
+.btn-copy-preview.copied { background:rgba(0,180,147,.2); border-color:var(--green); color:var(--green); }
+.voc-preview-body { padding:18px 20px; font-family:var(--mono); font-size:12px; line-height:2; color:#9ca3af; white-space:pre-wrap; word-break:break-all; max-height:380px; overflow-y:auto; }
+.vp-head{color:#60a5fa;font-weight:500} .vp-key{color:#6b7280} .vp-val{color:#e5e7eb} .vp-sep{color:#374151} .vp-empty{color:#4b5563;font-style:italic}
+.btn-copy-final { width:100%; padding:15px; background:var(--blue); color:var(--white); border:none; border-radius:var(--r-md); font-size:15px; font-weight:700; font-family:var(--font); cursor:pointer; transition:all .15s; margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-copy-final:hover { background:var(--blue-dark); transform:translateY(-1px); box-shadow:0 4px 16px rgba(49,130,246,.4); }
+.btn-copy-final.copied { background:var(--green); }
 
-/* ── Crash ── */
-.crash-list { display: flex; flex-direction: column; gap: 8px; }
-.crash-card { background: var(--white); border: 1px solid #fecdd3; border-left: 4px solid var(--red); border-radius: var(--radius-md); padding: 14px 16px; }
-.crash-time    { font-size: 11px; font-family: var(--mono); color: var(--amber); font-weight: 500; margin-bottom: 4px; }
-.crash-process { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 5px; }
-.crash-exc     { font-size: 12px; font-family: var(--mono); color: var(--red); word-break: break-all; }
+/* ── 히스토리 탭 ── */
+.history-list { display:flex; flex-direction:column; gap:10px; }
+.history-item { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--r-md); padding:16px 18px; cursor:pointer; transition:all .15s; }
+.history-item:hover { box-shadow:var(--sh-sm); border-color:var(--gray-300); }
+.history-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
+.history-sn   { font-size:14px; font-weight:700; color:var(--gray-900); font-family:var(--mono); }
+.history-date { font-size:11px; color:var(--gray-400); font-family:var(--mono); }
+.history-meta { display:flex; gap:6px; flex-wrap:wrap; }
+.history-tag  { font-size:11px; font-weight:600; padding:3px 8px; border-radius:5px; background:var(--gray-100); color:var(--gray-600); }
+.history-category { background:var(--blue-light); color:var(--blue); }
+.history-actions { display:flex; gap:6px; margin-top:10px; }
+.btn-history-load { padding:6px 14px; background:var(--blue-light); color:var(--blue); border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--font); }
+.btn-history-del  { padding:6px 14px; background:var(--red-light); color:var(--red); border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--font); }
+.history-empty { text-align:center; padding:48px 0; color:var(--gray-400); font-size:14px; line-height:1.8; }
 
-/* ── VOC Form ── */
-.voc-form { display: flex; flex-direction: column; gap: 12px; }
-
-.voc-field {
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: box-shadow .15s, border-color .15s;
-}
-.voc-field:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(49,130,246,.1); }
-
-.voc-field-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px 10px;
-  border-bottom: 1px solid var(--gray-100);
-}
-.voc-field-num {
-  width: 22px; height: 22px;
-  background: var(--blue-light);
-  color: var(--blue);
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.voc-field-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--gray-700);
-  flex: 1;
-  letter-spacing: -0.01em;
-}
-.auto-chip {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 99px;
-  letter-spacing: .03em;
-}
-.auto-chip.auto  { background: var(--green-light); color: var(--green); }
-.auto-chip.manual { background: var(--gray-100); color: var(--gray-500); }
-
-.voc-field-body { padding: 12px 16px; }
-
-/* 자동 채워진 읽기 전용 값 */
-.auto-value {
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-900);
-  line-height: 1.7;
-  word-break: break-all;
-}
-.auto-value.empty-auto { color: var(--gray-300); font-size: 13px; }
-
-/* 수동 입력 textarea */
-.voc-input {
-  width: 100%;
-  border: none;
-  outline: none;
-  font-family: var(--font);
-  font-size: 14px;
-  color: var(--gray-900);
-  resize: vertical;
-  min-height: 44px;
-  line-height: 1.6;
-  background: transparent;
-  padding: 0;
-}
-.voc-input::placeholder { color: var(--gray-300); }
-
-/* 서브필드 (video link, expected 등) */
-.sub-fields { display: flex; flex-direction: column; gap: 8px; }
-.sub-field { display: flex; flex-direction: column; gap: 4px; }
-.sub-label { font-size: 11px; font-weight: 600; color: var(--gray-400); letter-spacing: .04em; text-transform: uppercase; }
-.sub-input {
-  border: none; border-bottom: 1px solid var(--gray-200); outline: none;
-  font-family: var(--font); font-size: 14px; color: var(--gray-900);
-  padding: 6px 0; background: transparent; width: 100%; transition: border-color .15s;
-}
-.sub-input:focus { border-color: var(--blue); }
-.sub-input::placeholder { color: var(--gray-300); }
-
-/* ── VOC 미리보기 ── */
-.voc-preview-wrap {
-  background: var(--gray-900); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);
-}
-.voc-topbar {
-  display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: var(--gray-700);
-}
-.voc-dots { display: flex; gap: 5px; }
-.voc-dots span { width: 10px; height: 10px; border-radius: 50%; }
-.voc-dots .d1 { background: #ff5f57; } .voc-dots .d2 { background: #ffbd2e; } .voc-dots .d3 { background: #28ca41; }
-.voc-topbar-label { font-size: 12px; font-weight: 600; color: var(--gray-300); }
-.btn-copy-preview {
-  padding: 5px 14px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
-  border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--gray-300); cursor: pointer;
-  font-family: var(--font); transition: all .15s;
-}
-.btn-copy-preview:hover { background: rgba(255,255,255,.18); color: var(--white); }
-.btn-copy-preview.copied { background: rgba(0,180,147,.2); border-color: var(--green); color: var(--green); }
-.voc-preview-body {
-  padding: 20px 22px; font-family: var(--mono); font-size: 13px; line-height: 2;
-  color: #9ca3af; white-space: pre-wrap; word-break: break-all; max-height: 420px; overflow-y: auto;
-}
-.vp-head { color: #60a5fa; font-weight: 500; }
-.vp-key  { color: #6b7280; }
-.vp-val  { color: #e5e7eb; }
-.vp-sep  { color: #374151; }
-.vp-empty { color: #4b5563; font-style: italic; }
-
-/* ── Final Copy Button ── */
-.btn-copy-final {
-  width: 100%; padding: 16px; background: var(--blue); color: var(--white); border: none;
-  border-radius: var(--radius-md); font-size: 16px; font-weight: 700; font-family: var(--font);
-  cursor: pointer; transition: all .15s; letter-spacing: -0.01em; margin-top: 16px;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.btn-copy-final:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(49,130,246,.4); }
-.btn-copy-final.copied { background: var(--green); }
-
-/* ── Toast ── */
-#toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px);
-  background: var(--gray-900); color: var(--white); padding: 12px 24px; border-radius: 99px;
-  font-size: 14px; font-weight: 600; opacity: 0; transition: all .3s cubic-bezier(.34,1.56,.64,1);
-  pointer-events: none; z-index: 999; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── Spinner ── */
-.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .65s linear infinite; flex-shrink: 0; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+/* Toast */
+#toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(12px); background:var(--gray-900); color:var(--white); padding:11px 22px; border-radius:99px; font-size:14px; font-weight:600; opacity:0; transition:all .3s cubic-bezier(.34,1.56,.64,1); pointer-events:none; z-index:999; box-shadow:var(--sh-md); }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .65s linear infinite; flex-shrink:0; }
+@keyframes spin { to{transform:rotate(360deg)} }
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:4px}
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header>
   <div style="display:flex;align-items:center;gap:10px;">
     <div class="logo-icon">🐦</div>
@@ -396,111 +221,77 @@ header {
 </header>
 
 <div class="layout">
-
   <!-- Sidebar -->
   <aside class="sidebar">
-
     <div>
       <div class="sec-label">연결된 단말</div>
       <div class="s-card">
-        <div id="device-list">
-          <div style="text-align:center;padding:12px 0;color:var(--gray-400);font-size:13px;">단말 검색 중...</div>
-        </div>
+        <div id="device-list"><div style="text-align:center;padding:10px 0;color:var(--gray-400);font-size:13px;">단말 검색 중...</div></div>
         <button class="btn-refresh" onclick="refreshDevices()">↻ &nbsp;새로 고침</button>
       </div>
     </div>
-
     <div>
       <div class="sec-label">로그 파일 파싱</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;flex-direction:column;gap:9px;">
         <label class="drop-zone" id="drop-zone">
           <input type="file" id="log-file" accept=".log,.txt,.pcap,.qdb,.cfa" multiple>
           <span class="drop-icon">📂</span>
-          <div class="drop-title">파일을 여기에 끌어다 놓거나</div>
-          <div class="drop-sub">클릭해서 선택 · 여러 파일 동시 가능</div>
+          <div class="drop-title">파일을 끌어다 놓거나 클릭</div>
+          <div class="drop-sub">여러 파일 동시 선택 가능</div>
         </label>
         <div id="file-status"></div>
         <div id="progress-wrap">
-          <div class="progress-top">
-            <span class="progress-label">파싱 진행 중</span>
-            <span id="progress-pct">0%</span>
-          </div>
-          <div id="progress-track"><div id="progress-bar"></div></div>
-          <div id="progress-status"></div>
+          <div class="prog-top"><span class="prog-label">파싱 진행 중</span><span id="prog-pct">0%</span></div>
+          <div id="prog-track"><div id="prog-bar"></div></div>
+          <div id="prog-status"></div>
         </div>
         <button class="btn-primary" id="btn-parse" disabled onclick="parseLog()">로그 파싱 시작</button>
       </div>
     </div>
-
     <div class="hint-card">
       <strong>사용 순서</strong>
-      ① USB로 단말 연결 → 단말 선택<br>
+      ① USB 단말 연결 → 단말 선택<br>
       ② 또는 로그 파일 업로드<br>
-      ③ 기기 정보 확인<br>
-      ④ VOC 작성 탭 → 나머지 입력 후 복사
+      ③ 기기 정보 / 상세 분석 확인<br>
+      ④ VOC 작성 → 복사 → 붙여넣기
     </div>
-
   </aside>
 
   <!-- Main -->
-  <main class="main" id="main">
-
+  <main class="main">
     <!-- 빈 상태 -->
     <div class="empty-state" id="empty-state">
       <div class="empty-icon">📋</div>
       <div class="empty-title">단말 정보가 없습니다</div>
-      <div class="empty-desc">왼쪽에서 단말을 선택하거나<br>로그 파일을 업로드해 주세요</div>
+      <div class="empty-desc">단말을 연결하거나 로그 파일을 업로드해 주세요</div>
     </div>
 
-    <!-- 결과 영역 -->
+    <!-- 결과 -->
     <div id="result-area" style="display:none;">
 
       <!-- 탭 -->
       <div class="tab-bar">
-        <button class="tab-btn active" id="tab-device" onclick="switchTab('device')">
-          📱 기기 정보
-          <span class="tab-badge" id="badge-device">정보</span>
-        </button>
-        <button class="tab-btn" id="tab-voc" onclick="switchTab('voc')">
-          📝 VOC 작성
-          <span class="tab-badge" id="badge-voc">VOC</span>
-        </button>
+        <button class="tab-btn active" id="tab-device"   onclick="switchTab('device')">📱 기기 정보</button>
+        <button class="tab-btn"        id="tab-analysis" onclick="switchTab('analysis')">📊 상세 분석</button>
+        <button class="tab-btn"        id="tab-voc"      onclick="switchTab('voc')">📝 VOC 작성</button>
+        <button class="tab-btn"        id="tab-history"  onclick="switchTab('history')">📋 히스토리</button>
       </div>
 
-      <!-- ─── 탭 1: 기기 정보 ─── -->
+      <!-- ───────── 탭1: 기기 정보 ───────── -->
       <div id="panel-device">
-        <div class="result-header">
-          <div>
-            <div class="result-eyebrow" id="result-source">LOG</div>
-            <div class="result-title" id="result-title">기기 정보</div>
-          </div>
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;" id="result-source">LOG</div>
+          <div style="font-size:24px;font-weight:800;letter-spacing:-0.03em;" id="result-title">기기 정보</div>
         </div>
-
-        <div class="section-head">기기 식별</div>
+        <div class="sec-head">기기 식별</div>
         <div class="info-grid">
-          <div class="info-card hero full">
-            <div class="info-label">Serial Number</div>
-            <div id="v-full-sn"><span class="info-value hero-val empty" style="color:rgba(255,255,255,.4);">—</span></div>
-          </div>
-          <div class="info-card">
-            <div class="info-label">모델명</div>
-            <div id="v-model"><span class="info-value empty">—</span></div>
-          </div>
-          <div class="info-card">
-            <div class="info-label">제조사</div>
-            <div id="v-manufacturer"><span class="info-value empty">—</span></div>
-          </div>
-          <div class="info-card">
-            <div class="info-label">Item S/N</div>
-            <div id="v-item-sn"><span class="info-value empty">—</span></div>
-          </div>
-          <div class="info-card">
-            <div class="info-label">ro.serialno</div>
-            <div id="v-serial-no"><span class="info-value empty">—</span></div>
-          </div>
+          <div class="info-card hero full"><div class="info-label">Serial Number</div><div id="v-full-sn"><span class="info-value hero-val empty" style="color:rgba(255,255,255,.4);">—</span></div></div>
+          <div class="info-card"><div class="info-label">모델명</div><div id="v-model"><span class="info-value empty">—</span></div></div>
+          <div class="info-card"><div class="info-label">제조사</div><div id="v-manufacturer"><span class="info-value empty">—</span></div></div>
+          <div class="info-card"><div class="info-label">Item S/N</div><div id="v-item-sn"><span class="info-value empty">—</span></div></div>
+          <div class="info-card"><div class="info-label">ro.serialno</div><div id="v-serial-no"><span class="info-value empty">—</span></div></div>
         </div>
-
-        <div class="section-head">OS · 펌웨어</div>
+        <div class="sec-head">OS · 펌웨어</div>
         <div class="info-grid">
           <div class="info-card"><div class="info-label">Android 버전</div><div id="v-android"><span class="info-value empty">—</span></div></div>
           <div class="info-card"><div class="info-label">SDK 버전</div><div id="v-sdk"><span class="info-value empty">—</span></div></div>
@@ -509,8 +300,7 @@ header {
           <div class="info-card"><div class="info-label">보안 패치</div><div id="v-security"><span class="info-value empty">—</span></div></div>
           <div class="info-card"><div class="info-label">빌드 날짜</div><div id="v-build-date"><span class="info-value empty">—</span></div></div>
         </div>
-
-        <div class="section-head">하드웨어 · 네트워크</div>
+        <div class="sec-head">하드웨어 · 네트워크</div>
         <div class="info-grid">
           <div class="info-card"><div class="info-label">칩셋</div><div id="v-chipset"><span class="info-value empty">—</span></div></div>
           <div class="info-card"><div class="info-label">CPU ABI</div><div id="v-cpu"><span class="info-value empty">—</span></div></div>
@@ -519,493 +309,594 @@ header {
           <div class="info-card"><div class="info-label">IMEI 1</div><div id="v-imei1"><span class="info-value empty">—</span></div></div>
           <div class="info-card"><div class="info-label">IMEI 2 / SIM</div><div id="v-imei2"><span class="info-value empty">—</span></div></div>
         </div>
-
-        <div id="crash-section" style="display:none;">
-          <div class="section-head">⚠ 감지된 Crash</div>
-          <div class="crash-list" id="crash-list"></div>
-        </div>
-
         <div style="height:40px;"></div>
       </div>
 
-      <!-- ─── 탭 2: VOC 작성 ─── -->
-      <div id="panel-voc" style="display:none;">
+      <!-- ───────── 탭2: 상세 분석 ───────── -->
+      <div id="panel-analysis" style="display:none;">
 
-        <div class="result-header">
+        <!-- 다중 단말 탭 -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:24px;font-weight:800;letter-spacing:-0.03em;margin-bottom:4px;">상세 분석</div>
+          <div style="font-size:13px;color:var(--gray-400);">로그에서 추출한 확장 정보 · 이슈 상세</div>
+        </div>
+
+        <div class="sec-head">단말 선택</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+          <div class="multi-tab-bar" id="multi-tab-bar"></div>
+          <label style="cursor:pointer;">
+            <input type="file" id="multi-log-input" accept=".log,.txt,.pcap,.qdb,.cfa" multiple style="display:none;" onchange="addMultiDevice(this)">
+            <span class="btn-add-device">+ 단말 추가</span>
+          </label>
+        </div>
+        <div id="analysis-content">
+          <!-- 하드웨어 상태 -->
+          <div class="sec-head">하드웨어 상태</div>
+          <div class="analysis-grid">
+            <div class="stat-card"><div class="stat-label">배터리 잔량</div><div class="stat-value" id="a-bat-level">—</div><div class="stat-sub" id="a-bat-sub"></div></div>
+            <div class="stat-card"><div class="stat-label">배터리 사이클</div><div class="stat-value" id="a-bat-cycle">—</div><div class="stat-sub">충전 횟수</div></div>
+            <div class="stat-card"><div class="stat-label">RAM</div><div class="stat-value" id="a-ram">—</div><div class="stat-sub">전체 용량</div></div>
+            <div class="stat-card"><div class="stat-label">스토리지 사용</div><div class="stat-value" id="a-storage">—</div><div class="stat-sub" id="a-storage-sub"></div></div>
+          </div>
+
+          <!-- 로그 취득 시각 -->
+          <div class="sec-head">로그 정보</div>
+          <div class="info-grid">
+            <div class="info-card full"><div class="info-label">로그 취득 시각 (파일명 / 첫 타임스탬프)</div><div id="a-log-date"><span class="info-value empty">—</span></div></div>
+          </div>
+
+          <!-- 부팅 이벤트 -->
+          <div class="sec-head">부팅 이벤트</div>
+          <div id="a-boot-list" class="issue-list"></div>
+
+          <!-- 이슈 목록 -->
+          <div class="sec-head">이슈 목록 <span id="issue-count-badge" style="font-size:11px;background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:99px;font-weight:700;font-family:var(--font);"></span></div>
+          <div id="a-issue-list" class="issue-list"></div>
+        </div>
+      </div>
+
+      <!-- ───────── 탭3: VOC 작성 ───────── -->
+      <div id="panel-voc" style="display:none;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;">
           <div>
-            <div class="result-eyebrow">VOC Report</div>
-            <div class="result-title">VOC 작성</div>
+            <div style="font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">VOC Report</div>
+            <div style="font-size:24px;font-weight:800;letter-spacing:-0.03em;">VOC 작성</div>
           </div>
         </div>
 
-        <div class="voc-form" id="voc-form">
-
-          <!-- 1. Customer / Partner -->
+        <div class="voc-form">
+          <!-- 1 -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">1</div>
-              <div class="voc-field-label">Customer / Partner</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">1</div><div class="voc-field-label">Customer / Partner</div><span class="auto-chip manual">직접 입력</span></div>
+            <div class="voc-field-body"><textarea class="voc-input" id="f-customer" rows="1" placeholder="고객사 / 파트너사 이름" oninput="updatePreview()"></textarea></div>
+          </div>
+          <!-- 2 -->
+          <div class="voc-field">
+            <div class="voc-field-header"><div class="voc-field-num">2</div><div class="voc-field-label">Device Serial Number</div><span class="auto-chip auto">자동 입력</span></div>
+            <div class="voc-field-body"><div class="auto-value" id="f-sn-display">—</div></div>
+          </div>
+          <!-- 3 -->
+          <div class="voc-field">
+            <div class="voc-field-header"><div class="voc-field-num">3</div><div class="voc-field-label">OS / FW Version</div><span class="auto-chip auto">자동 입력</span></div>
+            <div class="voc-field-body"><div class="auto-value" id="f-os-display">—</div></div>
+          </div>
+          <!-- 4 -->
+          <div class="voc-field">
+            <div class="voc-field-header"><div class="voc-field-num">4</div><div class="voc-field-label">Issue Category</div><span class="auto-chip manual">직접 입력</span></div>
             <div class="voc-field-body">
-              <textarea class="voc-input" id="f-customer" rows="1" placeholder="고객사 / 파트너사 이름을 입력하세요" oninput="updatePreview()"></textarea>
+              <select class="voc-select" id="f-category" onchange="updatePreview()">
+                <option value="">(select)</option>
+                <option>CRS</option>
+                <option>GS 이슈</option>
+                <option>Simple question</option>
+                <option>Spec Question</option>
+                <option>Technical Question</option>
+                <option>대체품 개발</option>
+                <option>생산 이슈</option>
+                <option>수리 매뉴얼</option>
+                <option>신규 개발</option>
+                <option>인증</option>
+                <option>자체 개발</option>
+              </select>
             </div>
           </div>
-
-          <!-- 2. Device Serial Number -->
+          <!-- 5 -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">2</div>
-              <div class="voc-field-label">Device Serial Number</div>
-              <span class="auto-chip auto">자동 입력</span>
-            </div>
-            <div class="voc-field-body">
-              <div class="auto-value" id="f-sn-display">—</div>
-            </div>
-          </div>
-
-          <!-- 3. OS / FW Version -->
-          <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">3</div>
-              <div class="voc-field-label">OS / FW Version</div>
-              <span class="auto-chip auto">자동 입력</span>
-            </div>
-            <div class="voc-field-body">
-              <div class="auto-value" id="f-os-display">—</div>
-            </div>
-          </div>
-
-          <!-- 4. Issue Category -->
-          <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">4</div>
-              <div class="voc-field-label">Issue Category</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
-            <div class="voc-field-body">
-              <textarea class="voc-input" id="f-category" rows="1" placeholder="예: Hardware / Software / Network / Battery 등" oninput="updatePreview()"></textarea>
-            </div>
-          </div>
-
-          <!-- 5. Issue Description / Video link -->
-          <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">5</div>
-              <div class="voc-field-label">Issue Description / Video link</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">5</div><div class="voc-field-label">Issue Description / Video link</div><span class="auto-chip manual">직접 입력</span></div>
             <div class="voc-field-body">
               <div class="sub-fields">
-                <div class="sub-field">
-                  <div class="sub-label">Issue Description</div>
-                  <textarea class="voc-input" id="f-desc" rows="3" placeholder="이슈 현상을 상세히 설명해주세요" oninput="updatePreview()"></textarea>
-                </div>
-                <div class="sub-field">
-                  <div class="sub-label">Video Link</div>
-                  <input type="text" class="sub-input" id="f-video" placeholder="https://" oninput="updatePreview()">
-                </div>
-                <div class="sub-field">
-                  <div class="sub-label">Expected Result</div>
-                  <input type="text" class="sub-input" id="f-expected" placeholder="기대 동작" oninput="updatePreview()">
-                </div>
-                <div class="sub-field">
-                  <div class="sub-label">Actual Result</div>
-                  <input type="text" class="sub-input" id="f-actual" placeholder="실제 발생한 동작" oninput="updatePreview()">
-                </div>
+                <div class="sub-field"><div class="sub-label">Issue Description</div><textarea class="voc-input" id="f-desc" rows="3" placeholder="이슈 현상을 상세히 설명해주세요" oninput="updatePreview()"></textarea></div>
+                <div class="sub-field"><div class="sub-label">Video Link</div><input type="text" class="sub-input" id="f-video" placeholder="https://" oninput="updatePreview()"></div>
+                <div class="sub-field"><div class="sub-label">Expected Result</div><input type="text" class="sub-input" id="f-expected" placeholder="기대 동작" oninput="updatePreview()"></div>
+                <div class="sub-field"><div class="sub-label">Actual Result</div><input type="text" class="sub-input" id="f-actual" placeholder="실제 발생한 동작" oninput="updatePreview()"></div>
               </div>
             </div>
           </div>
-
-          <!-- 7. Step to Reproduce -->
+          <!-- 6 (로그 취득 시각) -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">7</div>
-              <div class="voc-field-label">Step to Reproduce</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
-            <div class="voc-field-body">
-              <textarea class="voc-input" id="f-steps" rows="3" placeholder="1. 앱 실행&#10;2. 설정 진입&#10;3. ..." oninput="updatePreview()"></textarea>
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">6</div><div class="voc-field-label">Log 취득 시각</div><span class="auto-chip auto">자동 입력</span></div>
+            <div class="voc-field-body"><div class="auto-value" id="f-logdate-display">—</div></div>
           </div>
-
-          <!-- 8. Issue related logs -->
+          <!-- 7 -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">8</div>
-              <div class="voc-field-label">Issue related logs</div>
-              <span class="auto-chip auto">자동 + 직접 입력</span>
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">7</div><div class="voc-field-label">Step to Reproduce</div><span class="auto-chip manual">직접 입력</span></div>
+            <div class="voc-field-body"><textarea class="voc-input" id="f-steps" rows="3" placeholder="1. 앱 실행&#10;2. 설정 진입&#10;3. ..." oninput="updatePreview()"></textarea></div>
+          </div>
+          <!-- 8 -->
+          <div class="voc-field">
+            <div class="voc-field-header"><div class="voc-field-num">8</div><div class="voc-field-label">Issue related logs</div><span class="auto-chip mixed">자동 + 직접</span></div>
             <div class="voc-field-body" style="display:flex;flex-direction:column;gap:8px;">
-              <div class="auto-value" id="f-crash-display" style="font-size:13px;"></div>
+              <div class="auto-value" id="f-crash-display" style="font-size:12px;"></div>
               <textarea class="voc-input" id="f-logs" rows="2" placeholder="추가 로그 링크 또는 내용 (선택)" oninput="updatePreview()"></textarea>
             </div>
           </div>
-
-          <!-- 9. Total amount -->
+          <!-- 9 -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">9</div>
-              <div class="voc-field-label">Total deployed / Failure devices</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">9</div><div class="voc-field-label">Total deployed / Failure devices</div><span class="auto-chip manual">직접 입력</span></div>
             <div class="voc-field-body" style="display:flex;gap:12px;">
-              <div style="flex:1;">
-                <div class="sub-label" style="margin-bottom:6px;">총 배포 수량</div>
-                <input type="text" class="sub-input" id="f-total" placeholder="예: 500대" oninput="updatePreview()">
-              </div>
-              <div style="flex:1;">
-                <div class="sub-label" style="margin-bottom:6px;">불량 수량</div>
-                <input type="text" class="sub-input" id="f-failure" placeholder="예: 3대" oninput="updatePreview()">
-              </div>
+              <div style="flex:1;"><div class="sub-label" style="margin-bottom:5px;">총 배포 수량</div><input type="text" class="sub-input" id="f-total" placeholder="예: 500대" oninput="updatePreview()"></div>
+              <div style="flex:1;"><div class="sub-label" style="margin-bottom:5px;">불량 수량</div><input type="text" class="sub-input" id="f-failure" placeholder="예: 3대" oninput="updatePreview()"></div>
             </div>
           </div>
-
-          <!-- 10. Failure rate -->
+          <!-- 10 -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">10</div>
-              <div class="voc-field-label">Failure Rate</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
-            <div class="voc-field-body">
-              <input type="text" class="sub-input" id="f-rate" placeholder="예: 0.6% (3/500)" oninput="updatePreview()">
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">10</div><div class="voc-field-label">Failure Rate</div><span class="auto-chip manual">직접 입력</span></div>
+            <div class="voc-field-body"><input type="text" class="sub-input" id="f-rate" placeholder="예: 0.6% (3/500)" oninput="updatePreview()"></div>
           </div>
-
-          <!-- 11. Shipping / Manufacturing date -->
+          <!-- 11 -->
           <div class="voc-field">
-            <div class="voc-field-header">
-              <div class="voc-field-num">11</div>
-              <div class="voc-field-label">Shipping / Manufacturing Date</div>
-              <span class="auto-chip manual">직접 입력</span>
-            </div>
+            <div class="voc-field-header"><div class="voc-field-num">11</div><div class="voc-field-label">Shipping / Manufacturing Date</div><span class="auto-chip manual">직접 입력</span></div>
             <div class="voc-field-body" style="display:flex;gap:12px;">
-              <div style="flex:1;">
-                <div class="sub-label" style="margin-bottom:6px;">Shipping Date</div>
-                <input type="text" class="sub-input" id="f-ship" placeholder="예: 2025-09-01" oninput="updatePreview()">
-              </div>
-              <div style="flex:1;">
-                <div class="sub-label" style="margin-bottom:6px;">Manufacturing Date</div>
-                <input type="text" class="sub-input" id="f-mfg" placeholder="예: 2025-08-15" oninput="updatePreview()">
-              </div>
+              <div style="flex:1;"><div class="sub-label" style="margin-bottom:5px;">Shipping Date</div><input type="text" class="sub-input" id="f-ship" placeholder="예: 2025-09-01" oninput="updatePreview()"></div>
+              <div style="flex:1;"><div class="sub-label" style="margin-bottom:5px;">Manufacturing Date</div><input type="text" class="sub-input" id="f-mfg" placeholder="예: 2025-08-15" oninput="updatePreview()"></div>
             </div>
           </div>
+        </div>
 
-        </div><!-- /voc-form -->
-
-        <!-- 미리보기 -->
-        <div class="section-head" style="margin-top:32px;">VOC 최종 미리보기</div>
+        <div class="sec-head" style="margin-top:28px;">VOC 최종 미리보기</div>
         <div class="voc-preview-wrap">
           <div class="voc-topbar">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div class="voc-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
-              <span class="voc-topbar-label">VOC Report</span>
-            </div>
+            <div style="display:flex;align-items:center;gap:10px;"><div class="voc-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="voc-topbar-label">VOC Report</span></div>
             <button class="btn-copy-preview" id="btn-copy-preview" onclick="copyVOC()">복사</button>
           </div>
           <div class="voc-preview-body" id="voc-preview-body"></div>
         </div>
-
-        <button class="btn-copy-final" id="btn-copy-final" onclick="copyVOC()">
-          📋 &nbsp;VOC 전체 복사 (Ctrl+V로 붙여넣기)
-        </button>
-
+        <button class="btn-copy-final" id="btn-copy-final" onclick="copyAndSave()">📋 &nbsp;VOC 전체 복사 + 히스토리 저장</button>
         <div style="height:40px;"></div>
-      </div><!-- /panel-voc -->
+      </div>
+
+      <!-- ───────── 탭4: 히스토리 ───────── -->
+      <div id="panel-history" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <div>
+            <div style="font-size:24px;font-weight:800;letter-spacing:-0.03em;">히스토리</div>
+            <div style="font-size:13px;color:var(--gray-400);margin-top:2px;">저장된 VOC 기록</div>
+          </div>
+          <button onclick="clearHistory()" style="padding:8px 16px;background:var(--red-light);color:var(--red);border:none;border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">전체 삭제</button>
+        </div>
+        <div class="history-list" id="history-list"></div>
+      </div>
 
     </div><!-- /result-area -->
   </main>
 </div>
 
-<div id="toast">✓&nbsp; 클립보드에 복사됐습니다</div>
+<div id="toast">✓ &nbsp;복사됐습니다</div>
 
 <script>
 const API = 'http://localhost:18765';
 let currentData = null;
-let logFiles = [];
 let currentTab = 'device';
+let logFiles = [];
+let multiDevices = []; // [{label, data}]
+let activeMultiIdx = 0;
 
-/* ── Tab Switch ── */
+/* ── Tab ── */
 function switchTab(tab) {
   currentTab = tab;
-  document.getElementById('tab-device').classList.toggle('active', tab === 'device');
-  document.getElementById('tab-voc').classList.toggle('active', tab === 'voc');
-  document.getElementById('panel-device').style.display = tab === 'device' ? '' : 'none';
-  document.getElementById('panel-voc').style.display = tab === 'voc' ? '' : 'none';
-  if (tab === 'voc') updatePreview();
+  ['device','analysis','voc','history'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('panel-'+t).style.display = t===tab ? '' : 'none';
+  });
+  if (tab==='voc')     updatePreview();
+  if (tab==='history') renderHistory();
+  if (tab==='analysis' && currentData) renderAnalysis(currentData);
 }
 
 /* ── Progress ── */
-function showProgress(pct, status) {
-  document.getElementById('progress-wrap').style.display = 'flex';
-  document.getElementById('progress-bar').style.width = Math.min(pct, 100) + '%';
-  document.getElementById('progress-pct').textContent  = Math.min(pct, 100) + '%';
-  if (status !== undefined) document.getElementById('progress-status').textContent = status;
+function showProg(pct, status) {
+  document.getElementById('progress-wrap').style.display='flex';
+  document.getElementById('prog-bar').style.width=Math.min(pct,100)+'%';
+  document.getElementById('prog-pct').textContent=Math.min(pct,100)+'%';
+  if(status!==undefined) document.getElementById('prog-status').textContent=status;
 }
-function hideProgress() {
-  document.getElementById('progress-wrap').style.display = 'none';
-  document.getElementById('progress-bar').style.width = '0%';
-}
+function hideProg() { document.getElementById('progress-wrap').style.display='none'; document.getElementById('prog-bar').style.width='0%'; }
 
 /* ── ADB ── */
 async function refreshDevices() {
-  const badge = document.getElementById('adb-badge');
-  const label = document.getElementById('adb-label');
-  const list  = document.getElementById('device-list');
-  label.textContent = 'ADB 확인 중'; badge.className = '';
+  const badge=document.getElementById('adb-badge'), label=document.getElementById('adb-label'), list=document.getElementById('device-list');
+  label.textContent='ADB 확인 중'; badge.className='';
   try {
-    const r = await fetch(`${API}/api/devices`);
-    const d = await r.json();
-    if (d.error === 'adb_not_found') {
-      badge.className = 'error'; label.textContent = 'ADB 없음';
-      list.innerHTML = `<div style="font-size:13px;color:var(--red);line-height:1.8;padding:4px 0;">
-        adb.exe를 이 폴더에 넣어주세요.<br>
-        <a href="https://developer.android.com/tools/releases/platform-tools" target="_blank" style="color:var(--blue);font-weight:600;">Platform Tools →</a></div>`;
+    const r=await fetch(`${API}/api/devices`), d=await r.json();
+    if(d.error==='adb_not_found') {
+      badge.className='error'; label.textContent='ADB 없음';
+      list.innerHTML=`<div style="font-size:12px;color:var(--red);line-height:1.8;">adb.exe를 이 폴더에 넣어주세요.<br><a href="https://developer.android.com/tools/releases/platform-tools" target="_blank" style="color:var(--blue);font-weight:600;">Platform Tools →</a></div>`;
       return;
     }
-    if (!d.devices || !d.devices.length) {
-      badge.className = ''; label.textContent = '단말 없음';
-      list.innerHTML = `<div style="text-align:center;padding:16px 0;color:var(--gray-400);font-size:13px;line-height:1.7;">연결된 단말이 없습니다<br><span style="font-size:12px;">USB 디버깅 활성화 후 연결해주세요</span></div>`;
+    if(!d.devices||!d.devices.length) {
+      badge.className=''; label.textContent='단말 없음';
+      list.innerHTML=`<div style="text-align:center;padding:14px 0;color:var(--gray-400);font-size:13px;">연결된 단말 없음<br><span style="font-size:11px;">USB 디버깅 활성화 후 연결해주세요</span></div>`;
       return;
     }
-    badge.className = 'connected'; label.textContent = `단말 ${d.devices.length}개 연결됨`;
-    list.innerHTML = d.devices.map(dev => `
-      <div class="device-item" onclick="selectDevice('${dev.id}', this)">
-        <div class="device-icon-wrap">📱</div>
-        <div><div class="device-name">${dev.model||'알 수 없음'}</div><div class="device-id">${dev.id}</div></div>
+    badge.className='connected'; label.textContent=`단말 ${d.devices.length}개`;
+    list.innerHTML=d.devices.map(dev=>`
+      <div class="device-item" onclick="selectDevice('${dev.id}',this)">
+        <div class="d-icon">📱</div>
+        <div><div class="d-name">${dev.model||'알 수 없음'}</div><div class="d-id">${dev.id}</div></div>
       </div>`).join('');
-  } catch(e) { badge.className = 'error'; label.textContent = '서버 오류'; }
+  } catch(e) { badge.className='error'; label.textContent='서버 오류'; }
 }
 
 async function selectDevice(deviceId, el) {
-  document.querySelectorAll('.device-item').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.device-item').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');
-  el.innerHTML = `<div class="device-icon-wrap">📱</div><div style="flex:1;"><div class="device-name">정보 수집 중...</div><div class="device-id">${deviceId}</div></div><div class="spinner"></div>`;
+  el.innerHTML=`<div class="d-icon">📱</div><div style="flex:1;"><div class="d-name">수집 중...</div><div class="d-id">${deviceId}</div></div><div class="spinner"></div>`;
   try {
-    const r = await fetch(`${API}/api/device_info?id=${encodeURIComponent(deviceId)}`);
-    const d = await r.json();
-    d._source = 'adb';
-    renderResult(d, d.model || deviceId);
-    el.innerHTML = `<div class="device-icon-wrap">📱</div><div><div class="device-name">${d.model||deviceId}</div><div class="device-id">${deviceId}</div></div>`;
+    const r=await fetch(`${API}/api/device_info?id=${encodeURIComponent(deviceId)}`);
+    const d=await r.json(); d._source='adb';
+    renderResult(d, d.model||deviceId);
+    el.innerHTML=`<div class="d-icon">📱</div><div><div class="d-name">${d.model||deviceId}</div><div class="d-id">${deviceId}</div></div>`;
   } catch(e) {
-    el.innerHTML = `<div class="device-icon-wrap">⚠️</div><div><div class="device-name" style="color:var(--red)">수집 오류</div><div class="device-id">${deviceId}</div></div>`;
+    el.innerHTML=`<div class="d-icon">⚠️</div><div><div class="d-name" style="color:var(--red)">수집 오류</div><div class="d-id">${deviceId}</div></div>`;
   }
 }
 
 /* ── File Drop ── */
-const dropZone = document.getElementById('drop-zone');
-const logFileInput = document.getElementById('log-file');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
-dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); logFiles = Array.from(e.dataTransfer.files); updateFileStatus(); });
-logFileInput.addEventListener('change', () => { logFiles = Array.from(logFileInput.files); updateFileStatus(); });
-
+const dropZone=document.getElementById('drop-zone'), logFileInput=document.getElementById('log-file');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag');logFiles=Array.from(e.dataTransfer.files);updateFileStatus();});
+logFileInput.addEventListener('change',()=>{logFiles=Array.from(logFileInput.files);updateFileStatus();});
 function updateFileStatus() {
-  const st  = document.getElementById('file-status');
-  const btn = document.getElementById('btn-parse');
-  if (!logFiles.length) { st.textContent=''; btn.disabled=true; return; }
-  const mb = (logFiles.reduce((a,f)=>a+f.size,0)/1024/1024).toFixed(1);
-  st.textContent = `✓  ${logFiles.length}개 파일 · ${mb} MB\n${logFiles.map(f=>f.name).join('\n')}`;
-  btn.disabled = false;
+  const st=document.getElementById('file-status'), btn=document.getElementById('btn-parse');
+  if(!logFiles.length){st.textContent='';btn.disabled=true;return;}
+  const mb=(logFiles.reduce((a,f)=>a+f.size,0)/1024/1024).toFixed(1);
+  st.textContent=`✓  ${logFiles.length}개 · ${mb} MB\n${logFiles.map(f=>f.name).join('\n')}`;
+  btn.disabled=false;
 }
 
 /* ── Parse ── */
 async function parseLog() {
-  if (!logFiles.length) return;
-  const btn = document.getElementById('btn-parse');
-  btn.disabled = true; btn.textContent = '파싱 중...';
-  const textParts = [];
-  for (let i = 0; i < logFiles.length; i++) {
-    showProgress(Math.round((i/logFiles.length)*40), `읽는 중 (${i+1}/${logFiles.length}) ${logFiles[i].name}`);
+  if(!logFiles.length) return;
+  const btn=document.getElementById('btn-parse');
+  btn.disabled=true; btn.textContent='파싱 중...';
+  const textParts=[], filename=logFiles.map(f=>f.name).join(',');
+  for(let i=0;i<logFiles.length;i++){
+    showProg(Math.round((i/logFiles.length)*40),`읽는 중 (${i+1}/${logFiles.length}) ${logFiles[i].name}`);
     textParts.push(await logFiles[i].text());
   }
-  showProgress(45, '서버로 전송 중...');
-  const combined = textParts.join('\n');
-  let fakePct = 45;
-  const fakeTimer = setInterval(() => { if (fakePct<88) { fakePct+=3; showProgress(fakePct,'핵심 정보 탐색 중...'); }}, 300);
+  showProg(45,'서버로 전송 중...');
+  let fakePct=45;
+  const fakeTimer=setInterval(()=>{if(fakePct<88){fakePct+=3;showProg(fakePct,'핵심 정보 탐색 중...');}},300);
   try {
-    const r = await fetch(`${API}/api/parse_log`, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content:combined})
-    });
+    const r=await fetch(`${API}/api/parse_log`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:textParts.join('\n'),filename})});
     clearInterval(fakeTimer);
-    if (!r.ok) throw new Error(`서버 오류: ${r.status}`);
-    const d = await r.json();
-    if (d.error) throw new Error(d.error);
-    showProgress(100, '완료!');
-    d._source = 'log';
+    const d=await r.json(); if(d.error) throw new Error(d.error);
+    showProg(100,'완료!'); d._source='log';
     renderResult(d, '로그 파싱 결과');
-    setTimeout(hideProgress, 1500);
-  } catch(e) { clearInterval(fakeTimer); showProgress(0,'오류: '+e.message); }
-  btn.disabled = false; btn.textContent = '로그 파싱 시작';
+    // 다중 단말에 자동 추가
+    const label = d.model || d.full_sn || `단말 ${multiDevices.length+1}`;
+    addToMulti(label, d);
+    setTimeout(hideProg,1500);
+  } catch(e){ clearInterval(fakeTimer); showProg(0,'오류: '+e.message); }
+  btn.disabled=false; btn.textContent='로그 파싱 시작';
 }
 
+/* ── 다중 단말 추가 ── */
+async function addMultiDevice(input) {
+  const files=Array.from(input.files); if(!files.length) return;
+  const textParts=[], filename=files.map(f=>f.name).join(',');
+  for(const f of files) textParts.push(await f.text());
+  try {
+    const r=await fetch(`${API}/api/parse_log`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:textParts.join('\n'),filename})});
+    const d=await r.json(); d._source='log';
+    const label=d.model||d.full_sn||`단말 ${multiDevices.length+1}`;
+    addToMulti(label, d);
+    renderAnalysis(multiDevices[activeMultiIdx].data);
+  } catch(e){ alert('파싱 오류: '+e.message); }
+  input.value='';
+}
+
+function addToMulti(label, data) {
+  // 중복 방지: 같은 S/N이면 업데이트
+  const idx=multiDevices.findIndex(d=>d.data.full_sn && d.data.full_sn===data.full_sn);
+  if(idx>=0) { multiDevices[idx]={label,data}; activeMultiIdx=idx; }
+  else        { multiDevices.push({label,data}); activeMultiIdx=multiDevices.length-1; }
+  renderMultiTabs();
+}
+
+function renderMultiTabs() {
+  const bar=document.getElementById('multi-tab-bar');
+  bar.innerHTML=multiDevices.map((d,i)=>`
+    <div class="multi-tab ${i===activeMultiIdx?'active':''}" onclick="selectMulti(${i})">
+      ${d.label}
+      <span class="close-btn" onclick="event.stopPropagation();removeMulti(${i})">×</span>
+    </div>`).join('');
+}
+function selectMulti(i){ activeMultiIdx=i; renderMultiTabs(); renderAnalysis(multiDevices[i].data); }
+function removeMulti(i){ multiDevices.splice(i,1); if(activeMultiIdx>=multiDevices.length) activeMultiIdx=Math.max(0,multiDevices.length-1); renderMultiTabs(); if(multiDevices.length) renderAnalysis(multiDevices[activeMultiIdx].data); }
+
 /* ── Render Device Info ── */
-function fmtVal(v, heroMode=false) {
-  const badge = currentData?._source==='adb'
-    ? (heroMode ? `<span class="src-badge" style="background:rgba(255,255,255,.2);color:#fff;">ADB</span>`
-                : `<span class="src-badge src-adb">ADB</span>`)
-    : (heroMode ? `<span class="src-badge" style="background:rgba(255,255,255,.2);color:#fff;">LOG</span>`
-                : `<span class="src-badge src-log">LOG</span>`);
-  if (!v || v==='' || v==='null') {
-    return heroMode
-      ? `<span class="info-value hero-val empty" style="color:rgba(255,255,255,.4);">—</span>`
-      : `<span class="info-value empty">—</span>`;
-  }
-  return heroMode
-    ? `<span class="info-value hero-val">${v}${badge}</span>`
-    : `<span class="info-value">${v}${badge}</span>`;
+function fmtVal(v,hero=false){
+  const badge=`<span class="src-badge ${currentData?._source==='adb'?'src-adb':'src-log'}">${currentData?._source==='adb'?'ADB':'LOG'}</span>`;
+  const heroBadge=`<span class="src-badge" style="background:rgba(255,255,255,.2);color:#fff;">${currentData?._source==='adb'?'ADB':'LOG'}</span>`;
+  if(!v||v===''||v==='null') return hero?`<span class="info-value hero-val empty" style="color:rgba(255,255,255,.4);">—</span>`:`<span class="info-value empty">—</span>`;
+  return hero?`<span class="info-value hero-val">${v}${heroBadge}</span>`:`<span class="info-value">${v}${badge}</span>`;
 }
 
 function renderResult(d, title) {
-  currentData = d;
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('result-area').style.display = '';
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-source').textContent = d._source==='adb' ? 'ADB 직접 수집' : '로그 파일 파싱';
+  currentData=d;
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('result-area').style.display='';
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-source').textContent=d._source==='adb'?'ADB 직접 수집':'로그 파일 파싱';
 
-  document.getElementById('v-full-sn').innerHTML      = fmtVal(d.full_sn, true);
-  document.getElementById('v-model').innerHTML        = fmtVal(d.model);
-  document.getElementById('v-manufacturer').innerHTML = fmtVal(d.manufacturer);
-  document.getElementById('v-item-sn').innerHTML      = fmtVal(d.item_sn);
-  document.getElementById('v-serial-no').innerHTML    = fmtVal(d.serial_no);
-  document.getElementById('v-android').innerHTML      = fmtVal(d.android_ver ? `Android ${d.android_ver}` : '');
-  document.getElementById('v-sdk').innerHTML          = fmtVal(d.sdk ? `API ${d.sdk}` : '');
-  document.getElementById('v-firmware').innerHTML     = fmtVal(d.firmware);
-  document.getElementById('v-build-id').innerHTML     = fmtVal(d.build_id);
-  document.getElementById('v-security').innerHTML     = fmtVal(d.security_patch);
-  document.getElementById('v-build-date').innerHTML   = fmtVal(d.build_date);
-  document.getElementById('v-chipset').innerHTML      = fmtVal(d.chipset);
-  document.getElementById('v-cpu').innerHTML          = fmtVal(d.cpu_abi);
-  document.getElementById('v-wifi').innerHTML         = fmtVal(d.wifi_mac);
-  document.getElementById('v-bt').innerHTML           = fmtVal(d.bt_mac);
-  document.getElementById('v-imei1').innerHTML        = fmtVal(d.imei1);
-  document.getElementById('v-imei2').innerHTML        = fmtVal(d.imei2||(d.sim_state?`SIM: ${d.sim_state}`:''));
+  document.getElementById('v-full-sn').innerHTML=fmtVal(d.full_sn,true);
+  document.getElementById('v-model').innerHTML=fmtVal(d.model);
+  document.getElementById('v-manufacturer').innerHTML=fmtVal(d.manufacturer);
+  document.getElementById('v-item-sn').innerHTML=fmtVal(d.item_sn);
+  document.getElementById('v-serial-no').innerHTML=fmtVal(d.serial_no);
+  document.getElementById('v-android').innerHTML=fmtVal(d.android_ver?`Android ${d.android_ver}`:'');
+  document.getElementById('v-sdk').innerHTML=fmtVal(d.sdk?`API ${d.sdk}`:'');
+  document.getElementById('v-firmware').innerHTML=fmtVal(d.firmware);
+  document.getElementById('v-build-id').innerHTML=fmtVal(d.build_id);
+  document.getElementById('v-security').innerHTML=fmtVal(d.security_patch);
+  document.getElementById('v-build-date').innerHTML=fmtVal(d.build_date);
+  document.getElementById('v-chipset').innerHTML=fmtVal(d.chipset);
+  document.getElementById('v-cpu').innerHTML=fmtVal(d.cpu_abi);
+  document.getElementById('v-wifi').innerHTML=fmtVal(d.wifi_mac);
+  document.getElementById('v-bt').innerHTML=fmtVal(d.bt_mac);
+  document.getElementById('v-imei1').innerHTML=fmtVal(d.imei1);
+  document.getElementById('v-imei2').innerHTML=fmtVal(d.imei2||(d.sim_state?`SIM: ${d.sim_state}`:''));
 
-  const crashSec = document.getElementById('crash-section');
-  const crashList = document.getElementById('crash-list');
-  if (d.crashes && d.crashes.length > 0) {
-    crashSec.style.display = '';
-    crashList.innerHTML = d.crashes.map(c=>`
-      <div class="crash-card">
-        <div class="crash-time">${c.time}</div>
-        <div class="crash-process">${c.process}</div>
-        <div class="crash-exc">${c.exception}</div>
-      </div>`).join('');
-  } else { crashSec.style.display = 'none'; }
-
-  // VOC 자동 입력 필드 채우기
   fillVocAuto(d);
-  updatePreview();
+  renderAnalysis(d);
+  if(!multiDevices.find(m=>m.data===d)) addToMulti(d.model||d.full_sn||'단말', d);
 }
 
-/* ── Fill VOC auto fields ── */
-function fillVocAuto(d) {
-  // S/N
-  const snEl = document.getElementById('f-sn-display');
-  snEl.className = 'auto-value' + (d.full_sn ? '' : ' empty-auto');
-  snEl.textContent = d.full_sn || '단말 연결 또는 로그 파싱 후 자동 입력됩니다';
+/* ── Analysis ── */
+function renderAnalysis(d) {
+  // 하드웨어 상태
+  const setTxt=(id,v,fallback='—')=>{ document.getElementById(id).textContent=v||fallback; };
+  setTxt('a-bat-level', d.battery_level);
+  document.getElementById('a-bat-sub').textContent = d.battery_temp ? `온도: ${d.battery_temp}` : '';
+  setTxt('a-bat-cycle', d.battery_cycle);
+  setTxt('a-ram', d.total_ram);
+  setTxt('a-storage', d.used_storage ? `${d.used_storage}` : '—');
+  document.getElementById('a-storage-sub').textContent = d.total_storage ? `전체: ${d.total_storage}` : '';
 
-  // OS / FW
-  const osEl = document.getElementById('f-os-display');
-  const osVal = [
-    d.android_ver ? `Android ${d.android_ver} (SDK ${d.sdk||'—'})` : '',
-    d.firmware    ? `FW: ${d.firmware}` : '',
-    d.build_id    ? `Build: ${d.build_id}` : '',
-    d.security_patch ? `Security: ${d.security_patch}` : ''
-  ].filter(Boolean).join('\n');
-  osEl.className = 'auto-value' + (osVal ? '' : ' empty-auto');
-  osEl.style.whiteSpace = 'pre-line';
-  osEl.textContent = osVal || '단말 연결 또는 로그 파싱 후 자동 입력됩니다';
+  // 로그 날짜
+  const ldEl=document.getElementById('a-log-date');
+  ldEl.innerHTML=d.log_date?`<span class="info-value">${d.log_date}</span>`:`<span class="info-value empty">—</span>`;
 
-  // Crash logs
-  const crashEl = document.getElementById('f-crash-display');
-  if (d.crashes && d.crashes.length > 0) {
-    crashEl.style.display = '';
-    crashEl.textContent = d.crashes.map(c=>`[${c.time}] ${c.process}\n${c.exception}`).join('\n\n');
+  // 부팅 이벤트
+  const bootList=document.getElementById('a-boot-list');
+  if(d.boot_events&&d.boot_events.length){
+    bootList.innerHTML=d.boot_events.map(b=>`
+      <div class="issue-card">
+        <div class="issue-time">${b.time}</div>
+        <div class="issue-process" style="color:var(--green);">✓ Boot Completed</div>
+      </div>`).join('');
   } else {
-    crashEl.style.display = 'none';
+    bootList.innerHTML=`<div style="font-size:13px;color:var(--gray-400);padding:8px 0;">부팅 이벤트 없음</div>`;
   }
+
+  // 이슈 목록 (Crash + ANR + Tombstone)
+  const issueList=document.getElementById('a-issue-list');
+  const issues=[];
+  (d.crashes||[]).forEach(c=>issues.push({type:'crash',...c}));
+  (d.anrs||[]).forEach(a=>issues.push({type:'anr',...a}));
+  (d.tombstones||[]).forEach(t=>issues.push({type:'tombstone',...t}));
+  issues.sort((a,b)=>a.time>b.time?1:-1);
+
+  const badge=document.getElementById('issue-count-badge');
+  badge.textContent=issues.length?`${issues.length}건`:'';
+
+  if(!issues.length){
+    issueList.innerHTML=`<div style="font-size:13px;color:var(--green);padding:8px 0;">✓ 감지된 이슈 없음</div>`;
+    return;
+  }
+
+  issueList.innerHTML=issues.map((iss,i)=>{
+    if(iss.type==='crash'){
+      const stHtml=(iss.stacktrace||[]).map(l=>`<div class="stacktrace-line ${l.startsWith('Caused')?'caused':''}">${l}</div>`).join('');
+      return `<div class="issue-card crash">
+        <span class="issue-type-badge badge-crash">FATAL CRASH</span>
+        <div class="issue-time">${iss.time}</div>
+        <div class="issue-process">${iss.process}</div>
+        <div class="issue-exc">${iss.exception}</div>
+        ${stHtml?`<div class="stacktrace-wrap">${stHtml}</div>`:''}
+      </div>`;
+    } else if(iss.type==='anr'){
+      return `<div class="issue-card anr">
+        <span class="issue-type-badge badge-anr">ANR</span>
+        <div class="issue-time">${iss.time}</div>
+        <div class="issue-process">${iss.process}</div>
+        ${iss.reason?`<div class="issue-exc" style="color:var(--amber);">${iss.reason}</div>`:''}
+      </div>`;
+    } else {
+      return `<div class="issue-card tombstone">
+        <span class="issue-type-badge badge-tombstone">NATIVE CRASH</span>
+        <div class="issue-time">${iss.time}</div>
+        <div class="issue-exc" style="color:var(--purple);">${iss.signal}</div>
+      </div>`;
+    }
+  }).join('');
 }
 
-/* ── VOC Preview Update ── */
-function updatePreview() {
-  if (!currentData) return;
-  const d = currentData;
-  const g = id => (document.getElementById(id)||{}).value || '';
+/* ── VOC Auto fill ── */
+function fillVocAuto(d){
+  const snEl=document.getElementById('f-sn-display');
+  snEl.className='auto-value'+(d.full_sn?'':' empty-auto');
+  snEl.textContent=d.full_sn||'단말 연결 또는 로그 파싱 후 자동 입력됩니다';
 
-  const osVal = [
-    d.android_ver ? `Android ${d.android_ver} (SDK ${d.sdk||'—'})` : '',
-    d.firmware    ? `FW: ${d.firmware}` : '',
-    d.build_id    ? `Build: ${d.build_id}` : '',
-    d.security_patch ? `Security: ${d.security_patch}` : ''
+  const osVal=[
+    d.android_ver?`Android ${d.android_ver} (SDK ${d.sdk||'—'})`:'',
+    d.firmware?`FW: ${d.firmware}`:'',
+    d.build_id?`Build: ${d.build_id}`:'',
+    d.security_patch?`Security Patch: ${d.security_patch}`:''
+  ].filter(Boolean).join('\n');
+  const osEl=document.getElementById('f-os-display');
+  osEl.className='auto-value'+(osVal?'':' empty-auto');
+  osEl.textContent=osVal||'단말 연결 또는 로그 파싱 후 자동 입력됩니다';
+
+  const ldEl=document.getElementById('f-logdate-display');
+  ldEl.className='auto-value'+(d.log_date?'':' empty-auto');
+  ldEl.textContent=d.log_date||'로그 파일 파싱 후 자동 입력됩니다';
+
+  const crashEl=document.getElementById('f-crash-display');
+  const allIssues=[...(d.crashes||[]).map(c=>`[CRASH ${c.time}] ${c.process}\n  ${c.exception}`),
+                   ...(d.anrs||[]).map(a=>`[ANR ${a.time}] ${a.process}${a.reason?' - '+a.reason:''}`)];
+  if(allIssues.length){ crashEl.style.display=''; crashEl.textContent=allIssues.join('\n\n'); }
+  else { crashEl.style.display='none'; }
+}
+
+/* ── VOC Preview ── */
+function updatePreview(){
+  if(!currentData) return;
+  const d=currentData, g=id=>(document.getElementById(id)||{}).value||'';
+  const osVal=[
+    d.android_ver?`Android ${d.android_ver} (SDK ${d.sdk||'—'})`:'',
+    d.firmware?`FW: ${d.firmware}`:'',
+    d.build_id?`Build: ${d.build_id}`:'',
+    d.security_patch?`Security Patch: ${d.security_patch}`:''
   ].filter(Boolean).join(' / ');
 
-  const crashLogs = (d.crashes||[]).length > 0
-    ? d.crashes.map(c=>`  [${c.time}] ${c.process} — ${c.exception}`).join('\n')
-    : '';
+  const allIssues=[...(d.crashes||[]).map(c=>`  [CRASH ${c.time}] ${c.process}\n  ${c.exception}`),
+                   ...(d.anrs||[]).map(a=>`  [ANR   ${a.time}] ${a.process}${a.reason?' — '+a.reason:''}`)];
 
-  const lines = [
-    `■ 1. Customer / Partner`,
-    `   ${g('f-customer') || '(미입력)'}`, ``,
-    `■ 2. Device Serial Number`,
-    `   ${d.full_sn || '—'}`, ``,
-    `■ 3. OS / FW Version`,
-    `   ${osVal || '—'}`, ``,
-    `■ 4. Issue Category`,
-    `   ${g('f-category') || '(미입력)'}`, ``,
+  const lines=[
+    `■ 1. Customer / Partner`,`   ${g('f-customer')||'(미입력)'}`,``,
+    `■ 2. Device Serial Number`,`   ${d.full_sn||'—'}`,``,
+    `■ 3. OS / FW Version`,`   ${osVal||'—'}`,``,
+    `■ 4. Issue Category`,`   ${g('f-category')||'(미입력)'}`,``,
     `■ 5. Issue Description / Video link`,
-    `   Description : ${g('f-desc') || '(미입력)'}`,
-    `   Video Link  : ${g('f-video') || '—'}`,
-    `   Expected    : ${g('f-expected') || '—'}`,
-    `   Actual      : ${g('f-actual') || '—'}`, ``,
+    `   Description : ${g('f-desc')||'(미입력)'}`,
+    `   Video Link  : ${g('f-video')||'—'}`,
+    `   Expected    : ${g('f-expected')||'—'}`,
+    `   Actual      : ${g('f-actual')||'—'}`,``,
+    `■ 6. Log 취득 시각`,`   ${d.log_date||'—'}`,``,
     `■ 7. Step to Reproduce`,
-    ...(g('f-steps') ? g('f-steps').split('\n').map(l=>`   ${l}`) : [`   (미입력)`]), ``,
+    ...(g('f-steps')?g('f-steps').split('\n').map(l=>`   ${l}`):[`   (미입력)`]),``,
     `■ 8. Issue related logs`,
-    ...(crashLogs ? crashLogs.split('\n') : []),
-    ...(g('f-logs') ? [`   ${g('f-logs')}`] : []),
-    ...(!crashLogs && !g('f-logs') ? [`   (미입력)`] : []), ``,
+    ...(allIssues.length?allIssues:[]),
+    ...(g('f-logs')?[`   ${g('f-logs')}`]:[]),
+    ...(!allIssues.length&&!g('f-logs')?[`   (미입력)`]:[]),``,
     `■ 9. Total deployed / Failure devices`,
-    `   배포 수량 : ${g('f-total') || '—'}`,
-    `   불량 수량 : ${g('f-failure') || '—'}`, ``,
-    `■ 10. Failure Rate`,
-    `   ${g('f-rate') || '(미입력)'}`, ``,
+    `   배포 수량 : ${g('f-total')||'—'}`,
+    `   불량 수량 : ${g('f-failure')||'—'}`,``,
+    `■ 10. Failure Rate`,`   ${g('f-rate')||'(미입력)'}`,``,
     `■ 11. Shipping / Manufacturing Date`,
-    `   Shipping Date     : ${g('f-ship') || '—'}`,
-    `   Manufacturing Date: ${g('f-mfg')  || '—'}`,
+    `   Shipping Date      : ${g('f-ship')||'—'}`,
+    `   Manufacturing Date : ${g('f-mfg')||'—'}`,
   ];
-
-  window._vocPlainText = lines.join('\n');
-
-  // HTML render
-  document.getElementById('voc-preview-body').innerHTML = lines.map(l => {
-    if (l.startsWith('■'))   return `<span class="vp-head">${l}</span>`;
-    if (l.trim() === '')     return `<span class="vp-sep"> </span>`;
-    if (l.includes('(미입력)')) return `<span class="vp-empty">${l}</span>`;
-    const colon = l.indexOf(':');
-    if (colon > 0 && colon < 22) {
-      return `<span class="vp-key">${l.slice(0,colon+1)}</span><span class="vp-val">${l.slice(colon+1)}</span>`;
-    }
+  window._vocPlainText=lines.join('\n');
+  document.getElementById('voc-preview-body').innerHTML=lines.map(l=>{
+    if(l.startsWith('■')) return `<span class="vp-head">${l}</span>`;
+    if(l.trim()==='')    return `<span class="vp-sep"> </span>`;
+    if(l.includes('(미입력)')) return `<span class="vp-empty">${l}</span>`;
+    const ci=l.indexOf(':');
+    if(ci>0&&ci<22) return `<span class="vp-key">${l.slice(0,ci+1)}</span><span class="vp-val">${l.slice(ci+1)}</span>`;
     return `<span class="vp-val">${l}</span>`;
   }).join('\n');
 }
 
 /* ── Copy ── */
-function copyVOC() {
-  if (!window._vocPlainText) return;
-  navigator.clipboard.writeText(window._vocPlainText).then(() => {
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-    ['btn-copy-preview','btn-copy-final'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (!btn) return;
-      const orig = btn.innerHTML;
-      btn.innerHTML = id === 'btn-copy-final' ? '✓&nbsp; 복사됐습니다!' : '✓ 복사됨';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
-    });
+function copyVOC(){
+  if(!window._vocPlainText) return;
+  navigator.clipboard.writeText(window._vocPlainText).then(()=>{
+    const toast=document.getElementById('toast'); toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2500);
+    ['btn-copy-preview'].forEach(id=>{const b=document.getElementById(id);if(!b)return;const o=b.innerHTML;b.innerHTML='✓ 복사됨';b.classList.add('copied');setTimeout(()=>{b.innerHTML=o;b.classList.remove('copied');},2000);});
   });
+}
+
+function copyAndSave(){
+  copyVOC();
+  saveHistory();
+  const btn=document.getElementById('btn-copy-final');
+  const orig=btn.innerHTML;
+  btn.innerHTML='✓ &nbsp;복사 + 저장 완료!'; btn.classList.add('copied');
+  setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('copied');},2000);
+}
+
+/* ── History ── */
+function saveHistory(){
+  if(!currentData||!window._vocPlainText) return;
+  const d=currentData, g=id=>(document.getElementById(id)||{}).value||'';
+  const rec={
+    id: Date.now(),
+    date: new Date().toLocaleString('ko-KR'),
+    sn: d.full_sn||'—',
+    model: d.model||'—',
+    firmware: d.firmware||'—',
+    category: g('f-category'),
+    customer: g('f-customer'),
+    voc: window._vocPlainText,
+    crash_count: (d.crashes||[]).length,
+    anr_count: (d.anrs||[]).length,
+  };
+  const list=JSON.parse(localStorage.getItem('voc_history')||'[]');
+  list.unshift(rec);
+  if(list.length>50) list.pop();
+  localStorage.setItem('voc_history', JSON.stringify(list));
+}
+
+function renderHistory(){
+  const list=JSON.parse(localStorage.getItem('voc_history')||'[]');
+  const el=document.getElementById('history-list');
+  if(!list.length){ el.innerHTML=`<div class="history-empty">📋<br>저장된 히스토리가 없습니다<br><span style="font-size:12px;">VOC 복사 버튼을 누르면 자동으로 저장됩니다</span></div>`; return; }
+  el.innerHTML=list.map((r,i)=>`
+    <div class="history-item">
+      <div class="history-header">
+        <div class="history-sn">${r.sn}</div>
+        <div class="history-date">${r.date}</div>
+      </div>
+      <div class="history-meta">
+        <span class="history-tag">${r.model}</span>
+        <span class="history-tag">${r.firmware}</span>
+        ${r.category?`<span class="history-tag history-category">${r.category}</span>`:''}
+        ${r.customer?`<span class="history-tag">${r.customer}</span>`:''}
+        ${r.crash_count?`<span class="history-tag" style="background:var(--red-light);color:var(--red);">CRASH ${r.crash_count}건</span>`:''}
+        ${r.anr_count?`<span class="history-tag" style="background:var(--amber-light);color:var(--amber);">ANR ${r.anr_count}건</span>`:''}
+      </div>
+      <div class="history-actions">
+        <button class="btn-history-load" onclick="loadHistory(${i})">불러오기</button>
+        <button class="btn-history-del"  onclick="deleteHistory(${i})">삭제</button>
+      </div>
+    </div>`).join('');
+}
+
+function loadHistory(i){
+  const list=JSON.parse(localStorage.getItem('voc_history')||'[]');
+  const r=list[i]; if(!r) return;
+  navigator.clipboard.writeText(r.voc).then(()=>{ showToast('히스토리를 클립보드에 복사했습니다'); });
+}
+
+function deleteHistory(i){
+  const list=JSON.parse(localStorage.getItem('voc_history')||'[]');
+  list.splice(i,1);
+  localStorage.setItem('voc_history',JSON.stringify(list));
+  renderHistory();
+}
+
+function clearHistory(){
+  if(!confirm('히스토리를 전체 삭제할까요?')) return;
+  localStorage.removeItem('voc_history'); renderHistory();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent='✓  '+msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
 }
 
 /* ── Init ── */

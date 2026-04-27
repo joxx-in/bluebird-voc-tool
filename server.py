@@ -18,14 +18,11 @@ def find_adb():
         os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else __file__),
         'adb.exe'
     )
-    if os.path.exists(local):
-        return local
-    return 'adb'
+    return local if os.path.exists(local) else 'adb'
 
 def run_adb(*args, timeout=8):
-    adb = find_adb()
     try:
-        r = subprocess.run([adb] + list(args), capture_output=True, text=True, timeout=timeout)
+        r = subprocess.run([find_adb()] + list(args), capture_output=True, text=True, timeout=timeout)
         return r.stdout.strip(), r.returncode
     except FileNotFoundError:
         return '__ADB_NOT_FOUND__', -1
@@ -69,6 +66,8 @@ def collect_device_info(device_id):
         'chipset':        getprop(device_id, 'ro.board.platform'),
         'cpu_abi':        getprop(device_id, 'ro.product.cpu.abi'),
         'wifi_mac': '', 'bt_mac': '', 'imei1': '', 'imei2': '',
+        'battery_level': '', 'battery_cycle': '', 'battery_temp': '',
+        'total_ram': '', 'total_storage': '', 'used_storage': '',
     }
     ro_sn = props['serial_no']
     item  = props['item_sn']
@@ -86,6 +85,30 @@ def collect_device_info(device_id):
     imei_match = re.findall(r"'([0-9]{15})'", imei_out)
     if len(imei_match) >= 1: props['imei1'] = imei_match[0]
     if len(imei_match) >= 2: props['imei2'] = imei_match[1]
+
+    # 배터리 상세
+    bat_out, _ = run_adb('-s', device_id, 'shell', 'dumpsys', 'battery')
+    lv = re.search(r'level:\s*(\d+)', bat_out)
+    if lv: props['battery_level'] = lv.group(1) + '%'
+    tmp = re.search(r'temperature:\s*(\d+)', bat_out)
+    if tmp: props['battery_temp'] = str(int(tmp.group(1)) / 10) + '°C'
+    cyc = re.search(r'Charge cycle count:\s*(\d+)', bat_out)
+    if cyc: props['battery_cycle'] = cyc.group(1) + '회'
+
+    # RAM
+    mem_out, _ = run_adb('-s', device_id, 'shell', 'cat', '/proc/meminfo')
+    total_m = re.search(r'MemTotal:\s+(\d+)', mem_out)
+    if total_m:
+        props['total_ram'] = str(round(int(total_m.group(1)) / 1024 / 1024, 1)) + ' GB'
+
+    # Storage
+    df_out, _ = run_adb('-s', device_id, 'shell', 'df', '/data')
+    df_m = re.search(r'\S+\s+(\d+)\s+(\d+)\s+(\d+)', df_out)
+    if df_m:
+        total_kb = int(df_m.group(1))
+        used_kb  = int(df_m.group(2))
+        props['total_storage'] = str(round(total_kb / 1024 / 1024, 1)) + ' GB'
+        props['used_storage']  = str(round(used_kb  / 1024 / 1024, 1)) + ' GB'
 
     return props
 
@@ -110,26 +133,40 @@ LOG_PATTERNS = {
     'sim_state':      r'\[gsm\.sim\.state\]\s*:\s*\[([^\]]+)\]',
     'battery_level':  r'healthd: battery l=(\d+)',
     'battery_temp':   r'healthd: battery l=\d+ v=\d+ t=([\d.]+)',
+    'battery_voltage':r'healthd: battery l=\d+ v=(\d+)',
+    'battery_cycle':  r'Charge cycle count:\s*(\d+)',
+    'total_ram':      r'MemTotal:\s+(\d+)\s+kB',
 }
 
-CHUNK = 512 * 1024  # 512 KB
+CHUNK = 512 * 1024
 
-def parse_content(content: str) -> dict:
-    """
-    텍스트를 청크 단위로 파싱.
-    핵심 정보를 모두 찾으면 조기 종료.
-    """
+def parse_content(content: str, filename_hint: str = '') -> dict:
     result = {}
     crashes = []
+    anrs = []
+    tombstones = []
+    boot_events = []
     found = set()
     total = len(content)
-    overlap = 1024
+    overlap = 2048
+
+    # 파일명에서 날짜 추출
+    log_date = ''
+    date_m = re.search(r'(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})', filename_hint)
+    if date_m:
+        log_date = f"{date_m.group(1)}-{date_m.group(2)}-{date_m.group(3)} {date_m.group(4)}:{date_m.group(5)}:{date_m.group(6)}"
+    # 로그 첫 줄 타임스탬프에서도 추출 시도
+    if not log_date:
+        ts_m = re.search(r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)', content[:2000])
+        if ts_m:
+            log_date = ts_m.group(1)
 
     offset = 0
     while offset < total:
         end = min(offset + CHUNK, total)
         chunk = content[offset:end]
 
+        # 기본 프로퍼티 파싱
         for key, pat in LOG_PATTERNS.items():
             if key not in found:
                 m = re.search(pat, chunk)
@@ -137,43 +174,108 @@ def parse_content(content: str) -> dict:
                     result[key] = m.group(1)
                     found.add(key)
 
-        if len(crashes) < 5:
+        # FATAL EXCEPTION + Stack Trace 전체
+        if len(crashes) < 10:
             for m in re.finditer(
-                r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+).*?FATAL EXCEPTION.*?\n.*?Process:\s*(\S+).*?\n(.*?Exception[^\n]*)',
-                chunk, re.DOTALL
+                r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)[^\n]*FATAL EXCEPTION[^\n]*\n'
+                r'[^\n]*Process:\s*(\S+)[^\n]*\n'
+                r'((?:(?!\d{2}-\d{2} \d{2}:\d{2}:\d{2})[^\n]*\n){0,30})',
+                chunk, re.MULTILINE
             ):
-                if len(crashes) < 5:
+                if len(crashes) < 10:
+                    stack = m.group(3).strip()
+                    lines = [l.strip() for l in stack.splitlines() if l.strip()]
+                    exception_line = lines[0] if lines else ''
+                    at_lines = [l for l in lines if l.startswith('at ') or l.startswith('Caused by:')][:8]
                     crashes.append({
-                        'time': m.group(1),
-                        'process': m.group(2),
-                        'exception': m.group(3).strip()
+                        'time':      m.group(1),
+                        'process':   m.group(2),
+                        'exception': exception_line,
+                        'stacktrace': at_lines,
                     })
 
-        core = {'model', 'android_ver', 'firmware', 'item_sn', 'model_sn'}
-        if core.issubset(found):
-            break  # 핵심 정보 확보 → 조기 종료
+        # ANR 탐지
+        if len(anrs) < 5:
+            for m in re.finditer(
+                r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)[^\n]*ANR in\s+(\S+)[^\n]*\n'
+                r'(?:[^\n]*Reason:\s*([^\n]+))?',
+                chunk
+            ):
+                if len(anrs) < 5:
+                    anrs.append({
+                        'time':    m.group(1),
+                        'process': m.group(2),
+                        'reason':  m.group(3).strip() if m.group(3) else '',
+                    })
+
+        # Tombstone (Native Crash)
+        if len(tombstones) < 5:
+            for m in re.finditer(
+                r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)[^\n]*'
+                r'(Fatal signal \d+[^\n]*|SIGSEGV[^\n]*)',
+                chunk
+            ):
+                if len(tombstones) < 5:
+                    tombstones.append({
+                        'time':   m.group(1),
+                        'signal': m.group(2).strip(),
+                    })
+
+        # Boot 이벤트
+        if len(boot_events) < 3:
+            for m in re.finditer(
+                r'(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)[^\n]*'
+                r'(Boot completed|boot_completed|sys\.boot_completed)',
+                chunk
+            ):
+                if len(boot_events) < 3:
+                    boot_events.append({'time': m.group(1)})
+
+        core = {'model', 'android_ver', 'firmware', 'item_sn'}
+        all_crash_done = len(crashes) >= 5 or 'FATAL EXCEPTION' not in content[offset:end]
+        if core.issubset(found) and len(anrs) > 0:
+            pass  # 계속 스캔 (crash/anr 더 찾기)
 
         offset = end - overlap if end < total else total
 
-    # S/N 조합
+    # 후처리
     ro_sn   = result.get('serial_no', '')
     item    = result.get('item_sn', '')
     model_s = result.get('model_sn', '')
     result['full_sn'] = ro_sn if ro_sn else (f"{model_s} {item}".strip() if item else '')
 
-    # WiFi MAC 포맷
     mac = result.get('wifi_mac', '')
     if mac and ':' not in mac and len(mac) == 12:
         result['wifi_mac'] = ':'.join(mac[i:i+2] for i in range(0, 12, 2))
 
-    result['crashes'] = crashes
+    # RAM 단위 변환
+    if 'total_ram' in result:
+        try:
+            result['total_ram'] = str(round(int(result['total_ram']) / 1024 / 1024, 1)) + ' GB'
+        except:
+            pass
+
+    # 배터리
+    if 'battery_level' in result:
+        result['battery_level'] = result['battery_level'] + '%'
+    if 'battery_temp' in result:
+        result['battery_temp'] = result['battery_temp'] + '°C'
+    if 'battery_cycle' in result:
+        result['battery_cycle'] = result['battery_cycle'] + '회'
+
+    result['crashes']    = crashes
+    result['anrs']       = anrs
+    result['tombstones'] = tombstones
+    result['boot_events']= boot_events
+    result['log_date']   = log_date
+
     return result
 
 
 # ── HTTP 핸들러 ───────────────────────────────────────────────────────────────
 
 class Handler(http.server.BaseHTTPRequestHandler):
-    def log_message(self, *a): pass  # 콘솔 조용히
+    def log_message(self, *a): pass
 
     def _cors(self):
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -196,11 +298,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         p = urlparse(self.path)
-
         if p.path == '/':
             here = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else __file__)
-            html_path = os.path.join(here, 'index.html')
-            with open(html_path, 'rb') as f:
+            with open(os.path.join(here, 'index.html'), 'rb') as f:
                 body = f.read()
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
@@ -208,49 +308,38 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self._cors()
             self.end_headers()
             self.wfile.write(body)
-
         elif p.path == '/api/devices':
             devices, err = get_connected_devices()
-            if err == 'adb_not_found':
-                self.send_json({'error': 'adb_not_found'})
-            else:
-                self.send_json({'devices': devices or []})
-
+            self.send_json({'error': 'adb_not_found'} if err == 'adb_not_found' else {'devices': devices or []})
         elif p.path == '/api/device_info':
             qs = parse_qs(p.query)
             dev_id = qs.get('id', [''])[0]
             if not dev_id:
-                self.send_json({'error': 'no device id'}, 400)
-                return
+                self.send_json({'error': 'no device id'}, 400); return
             self.send_json(collect_device_info(dev_id))
-
         else:
-            self.send_response(404)
-            self.end_headers()
+            self.send_response(404); self.end_headers()
 
     def do_POST(self):
         p = urlparse(self.path)
         length = int(self.headers.get('Content-Length', 0))
         raw = self.rfile.read(length)
-
         if p.path == '/api/parse_log':
             try:
                 data = json.loads(raw)
-                content = data.get('content', '')
-                result = parse_content(content)
+                content  = data.get('content', '')
+                filename = data.get('filename', '')
+                result = parse_content(content, filename)
                 self.send_json(result)
             except Exception as e:
                 self.send_json({'error': str(e)}, 500)
         else:
-            self.send_response(404)
-            self.end_headers()
+            self.send_response(404); self.end_headers()
 
 
 def open_browser():
-    import time
-    time.sleep(0.9)
+    import time; time.sleep(0.9)
     webbrowser.open(f'http://localhost:{PORT}')
-
 
 if __name__ == '__main__':
     print(f'[VOC Tool] 서버 시작 → http://localhost:{PORT}')

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# PyInstaller 빌드 결과
+dist/
+build/
+*.spec
+
+# 로그 파일 (실제 단말 로그 — 보안상 제외)
+*.log
+*.qdb
+*.qmdl
+*.pcap
+*.cfa
+
+# 개발 환경
+.venv/
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 에디터
+.vscode/
+.idea/
+*.swp
