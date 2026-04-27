@@ -206,6 +206,37 @@ header { background:var(--white); border-bottom:1px solid var(--gray-200); paddi
 .spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .65s linear infinite; flex-shrink:0; }
 @keyframes spin { to{transform:rotate(360deg)} }
 ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:4px}
+
+/* ── Admin 대시보드 ── */
+.admin-lock { display:flex; flex-direction:column; align-items:center; justify-content:center; height:65%; gap:16px; text-align:center; }
+.admin-lock-icon { width:68px; height:68px; background:var(--gray-100); border-radius:22px; display:flex; align-items:center; justify-content:center; font-size:30px; }
+.admin-lock-title { font-size:19px; font-weight:700; color:var(--gray-700); }
+.admin-lock-desc  { font-size:13px; color:var(--gray-400); }
+.admin-pw-form { display:flex; gap:8px; width:100%; max-width:320px; }
+.admin-pw-input { flex:1; padding:11px 14px; border:1.5px solid var(--gray-200); border-radius:var(--r-md); font-size:14px; font-family:var(--font); outline:none; transition:border-color .15s; }
+.admin-pw-input:focus { border-color:var(--blue); }
+.admin-pw-btn { padding:11px 18px; background:var(--blue); color:#fff; border:none; border-radius:var(--r-md); font-size:14px; font-weight:700; font-family:var(--font); cursor:pointer; }
+.admin-pw-error { font-size:12px; color:var(--red); margin-top:-8px; }
+
+.dash-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+.dash-kpi { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--r-md); padding:18px 20px; }
+.dash-kpi-label { font-size:11px; font-weight:700; color:var(--gray-400); letter-spacing:.05em; text-transform:uppercase; margin-bottom:6px; }
+.dash-kpi-value { font-size:28px; font-weight:800; color:var(--gray-900); letter-spacing:-0.02em; }
+.dash-kpi-sub   { font-size:12px; color:var(--gray-400); margin-top:2px; }
+.chart-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--r-md); padding:18px 20px; }
+.chart-title { font-size:13px; font-weight:700; color:var(--gray-700); margin-bottom:14px; }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.bar-label { font-size:12px; color:var(--gray-600); width:130px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bar-track { flex:1; height:8px; background:var(--gray-100); border-radius:99px; overflow:hidden; }
+.bar-fill  { height:100%; border-radius:99px; background:var(--blue); transition:width .4s ease; }
+.bar-fill.green  { background:var(--green); }
+.bar-fill.amber  { background:var(--amber); }
+.bar-count { font-size:12px; font-weight:600; color:var(--gray-500); width:28px; text-align:right; }
+.admin-log-table { width:100%; border-collapse:collapse; font-size:12px; }
+.admin-log-table th { text-align:left; padding:8px 10px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:11px; font-weight:700; color:var(--gray-400); letter-spacing:.05em; text-transform:uppercase; }
+.admin-log-table td { padding:10px 10px; border-bottom:1px solid var(--gray-100); color:var(--gray-700); }
+.admin-log-table tr:last-child td { border-bottom:none; }
+.admin-logout { padding:6px 14px; background:var(--gray-100); color:var(--gray-500); border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--font); }
 </style>
 </head>
 <body>
@@ -275,6 +306,7 @@ header { background:var(--white); border-bottom:1px solid var(--gray-200); paddi
         <button class="tab-btn"        id="tab-analysis" onclick="switchTab('analysis')">📊 상세 분석</button>
         <button class="tab-btn"        id="tab-voc"      onclick="switchTab('voc')">📝 VOC 작성</button>
         <button class="tab-btn"        id="tab-history"  onclick="switchTab('history')">📋 히스토리</button>
+        <button class="tab-btn"        id="tab-admin"    onclick="switchTab('admin')">📊 Admin</button>
       </div>
 
       <!-- ───────── 탭1: 기기 정보 ───────── -->
@@ -477,6 +509,107 @@ header { background:var(--white); border-bottom:1px solid var(--gray-200); paddi
         <div class="history-list" id="history-list"></div>
       </div>
 
+
+      <!-- ───────── 탭5: Admin 대시보드 ───────── -->
+      <div id="panel-admin" style="display:none;">
+
+        <!-- 잠금 화면 -->
+        <div id="admin-lock-screen">
+          <div class="admin-lock">
+            <div class="admin-lock-icon">🔐</div>
+            <div class="admin-lock-title">Admin 전용</div>
+            <div class="admin-lock-desc">비밀번호를 입력하면 전체 통계를 볼 수 있습니다</div>
+            <div class="admin-pw-form">
+              <input type="password" class="admin-pw-input" id="admin-pw-input"
+                placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkAdminPw()">
+              <button class="admin-pw-btn" onclick="checkAdminPw()">확인</button>
+            </div>
+            <div class="admin-pw-error" id="admin-pw-error" style="display:none;">비밀번호가 틀렸습니다</div>
+          </div>
+        </div>
+
+        <!-- 대시보드 (인증 후) -->
+        <div id="admin-dashboard" style="display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <div>
+              <div style="font-size:24px;font-weight:800;letter-spacing:-0.03em;">사용 통계</div>
+              <div style="font-size:13px;color:var(--gray-400);margin-top:2px;" id="admin-last-updated"></div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="loadAdminData()" style="padding:8px 16px;background:var(--blue-light);color:var(--blue);border:none;border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">새로고침</button>
+              <button class="admin-logout" onclick="logoutAdmin()">로그아웃</button>
+            </div>
+          </div>
+
+          <!-- KPI -->
+          <div class="dash-grid">
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">총 사용 횟수</div>
+              <div class="dash-kpi-value" id="kpi-total">—</div>
+              <div class="dash-kpi-sub">누적 파싱/수집</div>
+            </div>
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">이번 주</div>
+              <div class="dash-kpi-value" id="kpi-week">—</div>
+              <div class="dash-kpi-sub">최근 7일</div>
+            </div>
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">오늘</div>
+              <div class="dash-kpi-value" id="kpi-today">—</div>
+              <div class="dash-kpi-sub" id="kpi-today-date"></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <!-- 모델별 통계 -->
+            <div class="chart-card">
+              <div class="chart-title">단말 모델 TOP 5</div>
+              <div id="chart-model"></div>
+            </div>
+            <!-- OS 버전 통계 -->
+            <div class="chart-card">
+              <div class="chart-title">Android 버전 분포</div>
+              <div id="chart-os"></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <!-- VOC 카테고리 -->
+            <div class="chart-card">
+              <div class="chart-title">VOC 카테고리 분포</div>
+              <div id="chart-category"></div>
+            </div>
+            <!-- 이슈 현황 -->
+            <div class="chart-card">
+              <div class="chart-title">이슈 감지 현황</div>
+              <div id="chart-issue"></div>
+            </div>
+          </div>
+
+          <!-- 최근 로그 테이블 -->
+          <div class="chart-card">
+            <div class="chart-title">최근 사용 기록</div>
+            <div style="overflow-x:auto;">
+              <table class="admin-log-table">
+                <thead>
+                  <tr>
+                    <th>시각</th>
+                    <th>모델</th>
+                    <th>Firmware</th>
+                    <th>Android</th>
+                    <th>카테고리</th>
+                    <th>Crash</th>
+                    <th>ANR</th>
+                    <th>수집방법</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-log-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /result-area -->
   </main>
 </div>
@@ -494,13 +627,14 @@ let activeMultiIdx = 0;
 /* ── Tab ── */
 function switchTab(tab) {
   currentTab = tab;
-  ['device','analysis','voc','history'].forEach(t => {
+  ['device','analysis','voc','history','admin'].forEach(t => {
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
     document.getElementById('panel-'+t).style.display = t===tab ? '' : 'none';
   });
   if (tab==='voc')     updatePreview();
   if (tab==='history') renderHistory();
   if (tab==='analysis' && currentData) renderAnalysis(currentData);
+  if (tab==='admin')   renderAdminPanel();
 }
 
 /* ── Progress ── */
@@ -584,6 +718,17 @@ async function parseLog() {
     const d=await r.json(); if(d.error) throw new Error(d.error);
     showProg(100,'완료!'); d._source='log';
     renderResult(d, '로그 파싱 결과');
+    // Supabase 파싱 기록
+    sbInsert({
+      model:       d.model||null,
+      firmware:    d.firmware||null,
+      android_ver: d.android_ver||null,
+      full_sn:     d.full_sn ? d.full_sn.slice(0,8)+'****' : null,
+      category:    null,
+      crash_count: (d.crashes||[]).length,
+      anr_count:   (d.anrs||[]).length,
+      source:      'log'
+    });
     // 다중 단말에 자동 추가
     const label = d.model || d.full_sn || `단말 ${multiDevices.length+1}`;
     addToMulti(label, d);
@@ -823,6 +968,20 @@ function copyVOC(){
 function copyAndSave(){
   copyVOC();
   saveHistory();
+  // Supabase 기록
+  if(currentData) {
+    const g=id=>(document.getElementById(id)||{}).value||'';
+    sbInsert({
+      model:       currentData.model||null,
+      firmware:    currentData.firmware||null,
+      android_ver: currentData.android_ver||null,
+      full_sn:     currentData.full_sn ? currentData.full_sn.slice(0,8)+'****' : null,
+      category:    g('f-category')||null,
+      crash_count: (currentData.crashes||[]).length,
+      anr_count:   (currentData.anrs||[]).length,
+      source:      currentData._source||'log'
+    });
+  }
   const btn=document.getElementById('btn-copy-final');
   const orig=btn.innerHTML;
   btn.innerHTML='✓ &nbsp;복사 + 저장 완료!'; btn.classList.add('copied');
@@ -897,6 +1056,137 @@ function clearHistory(){
 function showToast(msg){
   const t=document.getElementById('toast'); t.textContent='✓  '+msg;
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+
+/* ── Supabase 설정 ── */
+const SUPABASE_URL  = 'https://uboqxgzqviyerflywtam.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVib3F4Z3pxdml5ZXJmbHl3dGFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjI1NDMsImV4cCI6MjA5Mjc5ODU0M30.TxaC8flm1yd4nB7b-7vAHhs3Tp1wz7XpyMGzkMfPoIM';
+const ADMIN_PW_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // 'admin' SHA-256 — 배포 전 변경 필요
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function sbInsert(row) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/voc_logs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(row)
+    });
+  } catch(e) { console.warn('Supabase 기록 실패:', e); }
+}
+
+async function sbSelect(query='') {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/voc_logs?${query}&order=created_at.desc`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  return r.json();
+}
+
+/* ── Admin 인증 ── */
+let adminAuthed = false;
+
+async function checkAdminPw() {
+  const pw = document.getElementById('admin-pw-input').value;
+  const hash = await sha256(pw);
+  if (hash === ADMIN_PW_HASH) {
+    adminAuthed = true;
+    document.getElementById('admin-lock-screen').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = '';
+    loadAdminData();
+  } else {
+    document.getElementById('admin-pw-error').style.display = '';
+    document.getElementById('admin-pw-input').value = '';
+  }
+}
+
+function logoutAdmin() {
+  adminAuthed = false;
+  document.getElementById('admin-lock-screen').style.display = '';
+  document.getElementById('admin-dashboard').style.display = 'none';
+  document.getElementById('admin-pw-input').value = '';
+}
+
+function renderAdminPanel() {
+  if (!adminAuthed) {
+    document.getElementById('admin-lock-screen').style.display = '';
+    document.getElementById('admin-dashboard').style.display = 'none';
+  }
+}
+
+/* ── 대시보드 데이터 로드 ── */
+async function loadAdminData() {
+  document.getElementById('admin-last-updated').textContent = '로딩 중...';
+  try {
+    const rows = await sbSelect('limit=500');
+    if (!Array.isArray(rows)) return;
+
+    const now   = new Date();
+    const today = now.toISOString().slice(0,10);
+    const week  = new Date(now - 7*24*60*60*1000).toISOString();
+
+    // KPI
+    document.getElementById('kpi-total').textContent = rows.length;
+    document.getElementById('kpi-week').textContent  = rows.filter(r=>r.created_at>=week).length;
+    document.getElementById('kpi-today').textContent = rows.filter(r=>r.created_at&&r.created_at.startsWith(today)).length;
+    document.getElementById('kpi-today-date').textContent = today;
+
+    // 집계 헬퍼
+    const count = (key) => {
+      const m={};
+      rows.forEach(r=>{ const v=r[key]||'(없음)'; m[v]=(m[v]||0)+1; });
+      return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+    };
+
+    renderBarChart('chart-model',    count('model').slice(0,5),    rows.length, 'blue');
+    renderBarChart('chart-os',       count('android_ver').slice(0,5), rows.length, 'green');
+    renderBarChart('chart-category', count('category').slice(0,5), rows.length, 'amber');
+
+    // 이슈 현황
+    const crashTotal = rows.reduce((s,r)=>s+(r.crash_count||0),0);
+    const anrTotal   = rows.reduce((s,r)=>s+(r.anr_count||0),0);
+    document.getElementById('chart-issue').innerHTML = `
+      <div class="bar-row"><span class="bar-label">FATAL CRASH</span><div class="bar-track"><div class="bar-fill" style="width:${crashTotal?Math.min(100,crashTotal*5):0}%;background:var(--red)"></div></div><span class="bar-count">${crashTotal}</span></div>
+      <div class="bar-row"><span class="bar-label">ANR</span><div class="bar-track"><div class="bar-fill" style="width:${anrTotal?Math.min(100,anrTotal*5):0}%;background:var(--amber)"></div></div><span class="bar-count">${anrTotal}</span></div>
+    `;
+
+    // 최근 로그 테이블
+    document.getElementById('admin-log-tbody').innerHTML = rows.slice(0,20).map(r=>`
+      <tr>
+        <td>${r.created_at?r.created_at.replace('T',' ').slice(0,16):''}</td>
+        <td>${r.model||'—'}</td>
+        <td style="font-family:var(--mono);font-size:11px;">${r.firmware||'—'}</td>
+        <td>${r.android_ver?'Android '+r.android_ver:'—'}</td>
+        <td>${r.category?`<span class="history-tag history-category" style="font-size:11px;">${r.category}</span>`:'—'}</td>
+        <td>${r.crash_count?`<span style="color:var(--red);font-weight:600;">${r.crash_count}</span>`:'0'}</td>
+        <td>${r.anr_count?`<span style="color:var(--amber);font-weight:600;">${r.anr_count}</span>`:'0'}</td>
+        <td><span class="src-badge ${r.source==='adb'?'src-adb':'src-log'}">${r.source||'log'}</span></td>
+      </tr>`).join('');
+
+    document.getElementById('admin-last-updated').textContent = `마지막 업데이트: ${new Date().toLocaleTimeString('ko-KR')}`;
+  } catch(e) {
+    document.getElementById('admin-last-updated').textContent = '데이터 로드 실패: ' + e.message;
+  }
+}
+
+function renderBarChart(elId, entries, total, color) {
+  const el = document.getElementById(elId);
+  if (!entries.length) { el.innerHTML='<div style="color:var(--gray-300);font-size:13px;">데이터 없음</div>'; return; }
+  const max = entries[0][1];
+  el.innerHTML = entries.map(([label,cnt])=>`
+    <div class="bar-row">
+      <span class="bar-label" title="${label}">${label}</span>
+      <div class="bar-track"><div class="bar-fill ${color}" style="width:${Math.round(cnt/max*100)}%"></div></div>
+      <span class="bar-count">${cnt}</span>
+    </div>`).join('');
 }
 
 /* ── Init ── */
